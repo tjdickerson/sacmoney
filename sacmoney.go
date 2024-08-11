@@ -1,10 +1,9 @@
 package sacmoney
 
 import (
-	"database/sql"
-	setup "github.com/tjdickerson/sacmoney/internal/setup"
+	cli "sacdev/sacmoney/pkg/cli"
 )
 
-func GetDatabase() *sql.DB {
-	return setup.GetDatabase()
+func DoCli() {
+	cli.Run()
 }

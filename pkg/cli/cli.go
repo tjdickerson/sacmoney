@@ -1,20 +1,18 @@
-package main
+package cli
 
 import (
 	"bufio"
 	"fmt"
-	sacm "github.com/tjdickerson/sacmoney"
 	"log"
 	"os"
 	"os/exec"
+	setup "sacdev/sacmoney/pkg/setup"
 	"strings"
 	"time"
 )
 
-func main() {
-	fmt.Printf("sacmoney\n")
-
-	db, err := sacm.GetDatabase()
+func Run() {
+	db, err := setup.GetDatabase()
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Failure initializing database: %s\n", err))
 	}
@@ -22,21 +20,21 @@ func main() {
 	defer db.Close()
 
 	var accountName string
-	if !sacm.HasAccount(db) {
+	if !setup.HasAccount(db) {
 		log.Printf("You have no accounts configured.\n")
 
 		accountName = getStringFromUser("Enter name for account: ")
 		accountName = strings.TrimSpace(accountName)
 		log.Printf("Creating (%s) account.\n", accountName)
 
-		err = sacm.CreateNewAccount(db, accountName)
+		err = setup.CreateNewAccount(db, accountName)
 		if err != nil {
 			log.Printf("Failed to create account: %s\n", err)
 		} else {
 			log.Printf("Account created.\n")
 		}
 	} else {
-		accountName = sacm.GetDefaultAccount(db)
+		accountName = setup.GetDefaultAccount(db)
 	}
 
 	if err == nil {
