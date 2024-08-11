@@ -1,4 +1,4 @@
-package sacdb
+package setup
 
 import (
 	"database/sql"
