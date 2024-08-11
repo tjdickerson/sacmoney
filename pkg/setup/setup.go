@@ -49,20 +49,23 @@ func HasAccount(db *sql.DB) bool {
 	return count > 0
 }
 
-func GetDefaultAccount(db *sql.DB) string {
-	result, err := db.Query("select name from accounts where id = 1")
-	defer result.Close()
+func GetDefaultAccount(db *sql.DB) (int32, string) {
+	result, err := db.Query("select id, name from accounts where id = 1")
 	if err != nil {
 		log.Printf("Failed to find account...\n")
-		return "UNKNOWN"
+		log.Fatal(err)
+		unk := "unknown"
+		return 0, unk
 	}
 
-	var account string
+	defer result.Close()
+	var accountId int32
+	var accountName string
 	if result.Next() {
-		result.Scan(&account)
+		result.Scan(&accountId, &accountName)
 	}
 
-	return account
+	return accountId, accountName
 }
 
 func CreateNewAccount(db *sql.DB, name string) error {
@@ -131,7 +134,7 @@ const CT_CATEGORIES = `
 const CT_LEDGER = `
 	create table if not exists ledger (
 		id integer primary key,
-		trancsaction_date integer,
+		transaction_date integer,
 		amount integer,
 	    name varchar(1000),
 	    account_id integer,

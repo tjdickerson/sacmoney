@@ -2,14 +2,20 @@ package cli
 
 import (
 	"bufio"
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	setup "sacdev/sacmoney/pkg/setup"
+	trn "sacdev/sacmoney/pkg/transactions"
+	utils "sacdev/sacmoney/pkg/utils"
+	"strconv"
 	"strings"
 	"time"
 )
+
+const WIDTH = 100
 
 func Run() {
 	db, err := setup.GetDatabase()
@@ -19,6 +25,7 @@ func Run() {
 
 	defer db.Close()
 
+	var accountId int32
 	var accountName string
 	if !setup.HasAccount(db) {
 		log.Printf("You have no accounts configured.\n")
@@ -33,15 +40,16 @@ func Run() {
 		} else {
 			log.Printf("Account created.\n")
 		}
-	} else {
-		accountName = setup.GetDefaultAccount(db)
 	}
 
+	accountId, accountName = setup.GetDefaultAccount(db)
+
+	var msg string
 	if err == nil {
 		running := true
 		for running {
 			clear()
-			displayMenu(accountName)
+			displayMenu(db, accountId, accountName, msg)
 
 			option := getStringFromUser("> ")
 			option = strings.TrimSpace(option)
@@ -50,14 +58,70 @@ func Run() {
 				running = false
 				break
 			case "1":
-				fmt.Printf("soon...")
+				createWithdrawal(db, accountId)
 				break
 			case "2":
-				fmt.Printf("soon...")
+				createDeposit(db, accountId)
+				break
+			case "d":
+				msg = deleteEntry(db)
 				break
 			}
 		}
 	}
+}
+
+func createDeposit(db *sql.DB, accountId int32) {
+	name := getStringFromUser("Deposit Name > ")
+	amount := getStringFromUser("Deposit Amount > ")
+
+	iAmount := utils.GetCentsFromString(amount)
+	transaction := &trn.Transaction{
+		Name:   name,
+		Amount: iAmount,
+		Date:   time.Now().UnixMilli(),
+	}
+
+	err := trn.AddTransaction(db, accountId, *transaction)
+	if err != nil {
+		log.Printf("Error adding transaction: %s\n", err)
+	}
+}
+
+func createWithdrawal(db *sql.DB, accountId int32) {
+	name := getStringFromUser("Debit Name > ")
+	amount := getStringFromUser("Debit Amount > ")
+
+	iAmount := utils.GetCentsFromString(amount)
+	iAmount = iAmount * -1
+	transaction := &trn.Transaction{
+		Name:   name,
+		Amount: iAmount,
+		Date:   time.Now().UnixMilli(),
+	}
+
+	err := trn.AddTransaction(db, accountId, *transaction)
+	if err != nil {
+		log.Printf("Error adding transaction: %s\n", err)
+	}
+}
+
+func deleteEntry(db *sql.DB) string {
+	entry := getStringFromUser("Entry ID > ")
+	entry = strings.TrimSpace(entry)
+	iEntry, err := strconv.Atoi(entry)
+	if err != nil {
+		log.Printf("Invalid entry: %s\n", err)
+		return "Invalid Entry"
+	}
+
+	err = trn.DeleteTransaction(db, int32(iEntry))
+	if err != nil {
+		log.Printf("Error deleting transaction: %s\n", err)
+		return "Couldn't Delete Transaction"
+	}
+
+	return "Transaction Deleted"
 }
 
 func clear() {
@@ -66,10 +130,21 @@ func clear() {
 	cmd.Run()
 }
 
-func displayMenu(accountName string) {
-	fmt.Printf("%s\n\n", headerRow(accountName))
-	fmt.Printf("%s\n\n", availableRow(0))
-	fmt.Printf("%s\n", commandRow())
+func displayMenu(db *sql.DB, accountId int32, accountName string, msg string) {
+	fmt.Printf("%s\n", headerRow(accountName))
+	fmt.Printf("%s\n", msg)
+	fmt.Printf("%s\n\n", availableRow(db, accountId))
+
+	top10, err := trn.GetLastTransactions(db, accountId)
+	if err != nil {
+		log.Printf("Error getting last transactions: %s\n", err)
+	} else {
+		for _, transaction := range top10 {
+			fmt.Printf("%s\n", transaction.ToCliString(WIDTH))
+		}
+	}
+
+	fmt.Printf("\n%s\n", commandRow())
 }
 
 func headerRow(accountName string) string {
@@ -79,8 +154,7 @@ func headerRow(accountName string) string {
 	title := fmt.Sprintf("sacmoney - %s", accountName)
 	date := currentTime.Format("Mon  02 Jan 2006")
 
-	headLen := 80
-	space := headLen - len(title) - len(date)
+	space := WIDTH - len(title) - len(date)
 	spacer := strings.Repeat(" ", space)
 
 	header = fmt.Sprintf("%s%s%s", title, spacer, date)
@@ -88,15 +162,20 @@ func headerRow(accountName string) string {
 	return header
 }
 
-func availableRow(totalAvail int64) string {
-	var div float32 = 0.10
-	var available = float32(totalAvail) * div
-	current := fmt.Sprintf("Available: $%.2f", available)
+func availableRow(db *sql.DB, accountId int32) string {
+	available, err := trn.GetAvailable(db, accountId)
+	var current string
+	if err != nil {
+		current = fmt.Sprintf("ERR %s", err)
+	} else {
+		current = fmt.Sprintf("Available: $%.2f", available)
+	}
+
 	return current
 }
 
 func commandRow() string {
-	commands := "1) Debit  2) Deposit    q) Quit"
+	commands := "1) Debit  2) Deposit  d) Delete Entry    q) Quit"
 	return commands
 }
 
@@ -108,5 +187,5 @@ func getStringFromUser(prompt string) string {
 		log.Fatal("Failed to read input string.")
 	}
 
-	return input
+	return strings.TrimSpace(input)
 }
