@@ -3,10 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
-	sacdb "internal/sacdb"
 	"log"
 	"os"
 	"os/exec"
+	"sacdb"
 	"strings"
 	"time"
 )
@@ -40,8 +40,25 @@ func main() {
 	}
 
 	if err == nil {
-		clear()
-		displayMenu(accountName)
+		running := true
+		for running {
+			clear()
+			displayMenu(accountName)
+
+			option := getStringFromUser("> ")
+			option = strings.TrimSpace(option)
+			switch option {
+			case "q":
+				running = false
+				break
+			case "1":
+				fmt.Printf("soon...")
+				break
+			case "2":
+				fmt.Printf("soon...")
+				break
+			}
+		}
 	}
 }
 
@@ -52,7 +69,9 @@ func clear() {
 }
 
 func displayMenu(accountName string) {
-	fmt.Printf("%s\n", headerRow(accountName))
+	fmt.Printf("%s\n\n", headerRow(accountName))
+	fmt.Printf("%s\n\n", availableRow(0))
+	fmt.Printf("%s\n", commandRow())
 }
 
 func headerRow(accountName string) string {
@@ -69,6 +88,18 @@ func headerRow(accountName string) string {
 	header = fmt.Sprintf("%s%s%s", title, spacer, date)
 
 	return header
+}
+
+func availableRow(totalAvail int64) string {
+	var div float32 = 0.10
+	var available = float32(totalAvail) * div
+	current := fmt.Sprintf("Available: $%.2f", available)
+	return current
+}
+
+func commandRow() string {
+	commands := "1) Debit  2) Deposit    q) Quit"
+	return commands
 }
 
 func getStringFromUser(prompt string) string {
