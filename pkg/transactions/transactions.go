@@ -3,6 +3,7 @@ package transactions
 import (
 	"database/sql"
 	"fmt"
+	utils "sacdev/sacmoney/pkg/utils"
 	"strconv"
 	"strings"
 	"time"
@@ -18,14 +19,14 @@ type Transaction struct {
 	Id     int32
 	Name   string
 	Amount int64
-	Date   int64
+	Date   time.Time
 }
 
 func (t *Transaction) ToCliString(width int) string {
 	id := strconv.Itoa(int(t.Id))
 	name := t.Name
 	amount := fmt.Sprintf("$%.2f", float64(t.Amount)*float64(0.01))
-	date := time.UnixMilli(t.Date).Format("02 Mon")
+	date := t.Date.Format("02 Mon")
 
 	padding := 9 // account for spacers between data elements
 	width = width - padding
@@ -72,7 +73,7 @@ func GetLastTransactions(db *sql.DB, accountId int32) ([]Transaction, error) {
 			Id:     id,
 			Name:   name,
 			Amount: amount,
-			Date:   date,
+			Date:   time.UnixMilli(date),
 		})
 	}
 
@@ -85,7 +86,8 @@ func AddTransaction(db *sql.DB, accountId int32, transaction Transaction) error 
 		return err
 	}
 
-	_, err = stmt.Exec(accountId, transaction.Name, transaction.Amount, transaction.Date)
+	transaction.Date = utils.TimeToUtc(&transaction.Date)
+	_, err = stmt.Exec(accountId, transaction.Name, transaction.Amount, transaction.Date.UnixMilli())
 	return err
 }
 

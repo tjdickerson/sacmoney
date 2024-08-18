@@ -6,12 +6,47 @@
 </head>
 <html>
 
-<body>
-	<div class="title">{{.Title}}</div>
+<body onload="page_load();">
+	<div class="title"><img src="/static/SacHead.svg" /><a href="/">{{.Title}}</a></div>
 
 	<div class="page-content">
-		<div id="transaction-container" class="trans-container">xx</div>
-		<button id="clicker" onclick="clicky();">Test</button>
+		<div class="account-info">
+			<div class="account-name">{{.AccountName}}</div>
+			<div class="amount-container">
+				<div class="currency">
+					$
+				</div>
+				<div id="account-available" class="account-available">{{.Available}}</div>
+			</div>
+		</div>
+
+		<div id="new-trans" class="floaty-box new-trans">
+			<div class="small-title">New Transaction</div>
+			<div class="trans-input-bar">
+				<div class="trans-date-input">
+					<div class="smaller-title">Transaction Date</div>
+					<input id="input-trans-date" class="input" type="date" value="2024-08-11"></input>
+				</div>
+				<div class="trans-name-input">
+					<div class="smaller-title">Description/Name</div>
+					<input id="input-trans-name" class="input" type="text" placeholder="Food Market"></input>
+				</div>
+				<div class="trans-amount-input">
+					<div class="smaller-title">Amount</div>
+					<input id="input-trans-amount" class="input number" type="number" placeholder="-20.38"></input>
+				</div>
+				<div class="trans-add-button">
+					<button id="btn-add" class="btn-link" onclick="add_transaction();">Add</button>
+				</div>
+			</div>
+		</div>
+
+		<div id=" transaction-container" class="floaty-box trans-container">
+			<div id="transactions" class="transactions">
+			</div>
+		</div>
+
+
 	</div>
 </body>
 

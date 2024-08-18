@@ -79,7 +79,7 @@ func createDeposit(db *sql.DB, accountId int32) {
 	transaction := &trn.Transaction{
 		Name:   name,
 		Amount: iAmount,
-		Date:   time.Now().UnixMilli(),
+		Date:   time.Now(),
 	}
 
 	err := trn.AddTransaction(db, accountId, *transaction)
@@ -97,7 +97,7 @@ func createWithdrawal(db *sql.DB, accountId int32) {
 	transaction := &trn.Transaction{
 		Name:   name,
 		Amount: iAmount,
-		Date:   time.Now().UnixMilli(),
+		Date:   time.Now(),
 	}
 
 	err := trn.AddTransaction(db, accountId, *transaction)

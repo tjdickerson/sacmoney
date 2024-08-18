@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="1780px"
+   height="1800px"
+   viewBox="0 0 1780 1800"
+   style="enable-background:new 0 0 1780 1800;"
+   xml:space="preserve"
+   sodipodi:docname="SacHead.svg"
+   inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"><metadata
+   id="metadata59"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs57" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="2275"
+   inkscape:window-height="1483"
+   id="namedview55"
+   showgrid="false"
+   inkscape:zoom="0.56"
+   inkscape:cx="890"
+   inkscape:cy="900"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1" />
+<style
+   type="text/css"
+   id="style10">
+	.st0{fill:#D92323;stroke:#000000;stroke-width:34;stroke-miterlimit:10;}
+	.st1{fill:#FFFFFF;stroke:#000000;stroke-width:34;stroke-miterlimit:10;}
+	.st2{clip-path:url(#SVGID_2_);fill:#FFFFFF;stroke:#000000;stroke-width:34;stroke-miterlimit:10;}
+	.st3{clip-path:url(#SVGID_4_);fill:#FFFFFF;stroke:#000000;stroke-width:34;stroke-miterlimit:10;}
+	.st4{fill:#FFD35C;stroke:#000000;stroke-width:34;stroke-miterlimit:10;}
+	.st5{fill:#030202;stroke:#000000;stroke-width:34;stroke-miterlimit:10;}
+</style>
+
+<g
+   id="g52"
+   transform="translate(-14.285714,239.28571)">
+	<circle
+   class="st1"
+   cx="890.28998"
+   cy="686.83002"
+   r="397"
+   id="circle40" />
+	<path
+   class="st0"
+   d="m 1107,890.64 c 16.63,-37.69 32.91,6.63 41.04,-9.4 2.15,-4.25 3.62,-9.21 6.86,-12.31 4.08,-3.9 9.82,-3.82 15.04,-3.54 11.49,0.61 22.98,1.21 34.47,1.82 5.16,0.27 10.43,0.57 15.23,2.85 10.3,4.89 16.24,17.71 20.19,30.07 8.18,25.57 11.4,52.95 14.56,80.06 1.19,10.2 2.35,20.85 -0.49,30.58 -4.54,15.59 -17.91,24.59 -30.45,31.53 -9.04,5 -18.65,9.76 -28.59,8.92 -9.94,-0.84 -20.14,-9.09 -21.23,-20.91 -0.3,-3.24 0.05,-6.72 -1.26,-9.58 -1.31,-2.86 -5.37,-4.05 -6.59,-1.14 -1.48,14.89 -4.6,32.49 -16.25,38.09 -13.04,6.27 -26.52,-7.12 -35.74,-19.79 -5.94,-8.16 -11.8,-16.71 -14.96,-26.84 -3.16,-10.13 -3.19,-22.24 2.06,-31.05 4.18,-7.02 11.44,-11.74 13.24,-20.08 0.93,-4.29 0.2,-8.8 -0.53,-13.14 -2.78,-16.53 -18.07,-30.24 -9.13,-48.63 1.86,-3.8 -0.09,-1.56 2.53,-7.51 z"
+   id="path42" />
+	<path
+   class="st4"
+   d="m 1241.3,648.19 c 57.11,21.67 110.9,47.77 160.11,77.69 30.12,18.32 59.28,38.82 74.64,64.81 9.49,16.06 11,37.94 -9.29,47.69 -9.4,4.52 -21.29,5.23 -32.6,5.81 -15.83,0.81 -31.65,1.61 -47.48,2.42 -17.55,0.89 -35.19,1.8 -52.33,4.64 -30.48,5.06 -58.24,16.05 -87.26,24.39 -29.02,8.34 -61.34,14.08 -91.46,8.05 l -0.87,-1.18 z"
+   id="path44" />
+	<ellipse
+   class="st1"
+   cx="1030.59"
+   cy="648.19"
+   rx="91.519997"
+   ry="157.64"
+   id="ellipse46" />
+	<ellipse
+   class="st5"
+   cx="1088.4301"
+   cy="648.19"
+   rx="33.669998"
+   ry="64.790001"
+   id="ellipse48" />
+	<path
+   class="st0"
+   d="m 855.29,303.02 c -3.63,-1.49 -7.14,-3.99 -8.23,-7.75 C 811.51,172.55 685.05,106.25 564.72,97.34 c -23.85,-1.77 -53.82,3.15 -60.97,25.97 29.72,14.46 55.97,35.99 75.95,62.31 -37.43,-7.04 -75.87,-12.32 -113.5,-6.43 -37.63,5.89 -74.77,24.36 -95.64,56.22 -5.49,8.39 -9.56,20.1 -3.2,27.85 3.23,3.93 8.34,5.67 13.15,7.32 38.37,13.14 74.85,31.8 107.96,55.22 -1.29,18.83 -27.69,32.91 -20.72,50.45 4.6,11.57 19.93,13.08 32.33,14.23 30.77,2.85 60.62,15 84.62,34.45 26.49,21.47 48.88,52.96 82.71,57.24 38.7,4.9 70.62,-28.19 95.46,-58.26 14.38,-17.42 29.02,-35.28 36.76,-56.5 1.35,-3.71 2.53,-7.58 4.91,-10.72 2.97,-3.91 7.5,-6.28 11.88,-8.52 16.73,-8.56 61.23,6.5 50.18,-25.69 -3.28,-11.56 -8.11,-18.15 -11.31,-19.46 z"
+   id="path50" />
+</g>
+</svg>

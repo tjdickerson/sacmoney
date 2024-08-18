@@ -18,18 +18,40 @@ body {
 	color: #e8e8de;
 	padding: 8px 14px;
 	margin: 0;
-	box-shadow: -4px 3px 7px -1px rgba(166,166,166,0.75);
+	box-shadow: -2px 2px 2px 0px #e3e3ea;
 	border-bottom: 1px solid #57855d;
+	height: 40px;
+	display: flex;
+	align-items: center;
+}
+
+.title > img {
+	height: 50px;
+}
+
+.title > a {
+	text-decoration: none;
+	color: #e8e8de;
+}
+
+.title > a:visited {
+	text-decoration: none;
+	color: #e8e8de;
+}
+
+.floaty-box {
+	box-sizing: border-box;
+	box-shadow: -2px 2px 2px 0px #e3e3ea;
+	border: 1px solid #f7f7f7;
 }
 
 .trans-container {
 	display: flex;
+	flex-direction: column;
 	width: 80%;
 	margin: auto;
 	box-sizing: border-box;
-	border: 1px solid #f7f7f7;
 	padding: 14px;
-	box-shadow: -4px 3px 7px -1px rgba(166,166,166,0.75);
 }
 
 .transactions {
@@ -55,7 +77,8 @@ body {
 	box-sizing: border-box;
 }
 
-.transaction > .date {
+.transaction > .date,
+.trans-input-bar > .trans-date-input {
 	width: 15%;
 	box-sizing: border-box;
 	text-align: left;
@@ -77,3 +100,103 @@ body {
 .pos {
 	color: #189d4f;
 }
+
+
+.account-info {
+	display: flex;
+    justify-content: space-between;
+    width: 77%;
+    margin: 12px auto;
+    font-size: 0.9em;
+    color: #3b3b34;
+}
+
+.account-name {
+}
+
+.currency {
+	color: #8f8f8f;
+    padding-right: 5px;
+    font-size: 0.9em;
+}
+
+.amount-container {
+	display: flex;
+}
+
+.account-available {
+
+}
+
+.new-trans {
+	width: 80%;
+	padding: 8px;
+	padding-bottom: 12px;
+	margin: auto;
+	margin-bottom: 16px;
+}
+
+.small-title {
+	font-size: 0.65em;
+	color: #b3afab;
+}
+
+.smaller-title {
+	font-size: 0.55em;
+	color: #b3afab;
+}
+
+.trans-input-bar {
+    display: flex;
+    font-size: 0.9em;
+    justify-content: center;
+    align-items: self-end;
+}
+
+.trans-input-bar > div {
+	margin: 2px 14px;
+}
+
+
+.input {
+	font-size: 0.9em;
+	box-shadow: -2px 2px 2px 0px #e3e3ea;
+	border: 1px solid #c9c9ce;
+	padding: 4px;
+}
+
+.input.number {
+	text-align: right;
+}
+
+.input::placeholder {
+	color: #e3e3e3;
+}
+
+.input:focus {
+	border: 1px solid #c9c9fe;
+	outline: none;
+}
+
+.btn-link {
+	padding: 5px 12px;
+	background: #fafafa;
+	border: 1px solid #c0c0c0;
+}
+
+.btn-link:hover {
+	background: #39a77c;
+    border: 1px solid #9edeb5;
+    color: #d9ffe4;
+}
+
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+

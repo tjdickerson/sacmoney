@@ -1,43 +1,104 @@
 package server
 
 import (
+	"bytes"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"html"
 	"html/template"
 	"io"
 	"log"
 	"net/http"
 	setup "sacdev/sacmoney/pkg/setup"
 	trn "sacdev/sacmoney/pkg/transactions"
+	utils "sacdev/sacmoney/pkg/utils"
+	"strings"
 	"time"
 )
 
 type PageData struct {
-	Title string
+	Title       string
+	AccountName string
+	Available   string
+}
+
+type sacmoneyInfo struct {
+	db          *sql.DB
+	accountId   int32
+	accountName string
 }
 
 type postHandler struct {
-	db        *sql.DB
-	accountId int32
-	handler   func(h *postHandler) string
+	info    *sacmoneyInfo
+	handler func(h *postHandler, r *http.Request) string
 }
 
 func (h *postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	html := h.handler(h)
+	html := h.handler(h, r)
 	io.WriteString(w, html)
 }
 
-func getTransactionsHandler(h *postHandler) string {
-	transactions, err := trn.GetLastTransactions(h.db, h.accountId)
+type TransactionData struct {
+	TransactionDate string
+	Name            string
+	AmountClass     string
+	Amount          string
+}
+
+type NewTransactionJson struct {
+	Date   string
+	Name   string
+	Amount string
+}
+
+func fnAddTransactionHandler(h *postHandler, r *http.Request) string {
+	var ntj NewTransactionJson
+	err := json.NewDecoder(r.Body).Decode(&ntj)
+
+	if err != nil {
+		serr := fmt.Sprintf("Error: %s", err)
+		fmt.Printf("%s\n", serr)
+		return serr
+	}
+
+	date, _ := time.Parse("2006-01-02", ntj.Date)
+	name := strings.TrimSpace(ntj.Name)
+	iAmount := utils.GetCentsFromString(ntj.Amount)
+
+	transaction := &trn.Transaction{
+		Name:   name,
+		Amount: iAmount,
+		Date:   date,
+	}
+
+	err = trn.AddTransaction(h.info.db, h.info.accountId, *transaction)
+	if err != nil {
+		serr := fmt.Sprintf("Error adding transaction: %s", err)
+		log.Printf("%s\n", serr)
+		return serr
+	}
+
+	newAmount, _ := trn.GetAvailable(h.info.db, h.info.accountId)
+	sNewAmount := fmt.Sprintf("%.2f", newAmount)
+
+	return fmt.Sprintf("Added transaction.::%s", sNewAmount)
+}
+
+func fnTransactionsHandler(h *postHandler, r *http.Request) string {
+	transactions, err := trn.GetLastTransactions(h.info.db, h.info.accountId)
 
 	if err != nil {
 		return fmt.Sprintf("<div class=\"error\">%s</div>", err)
 	}
 
-	html := "<div class=\"transactions\">"
+	var htmlTmpl bytes.Buffer
+	tmpl, _ := template.ParseFiles("templates/transaction_list.html")
 	for _, t := range transactions {
-		strDate := time.UnixMilli(t.Date).Format("02 Mon")
-		amount := fmt.Sprintf("$%.2f", float64(t.Amount)*float64(0.01))
+
+		strDate := t.Date.Format("02 Mon")
+		amount := fmt.Sprintf("%.2f", float64(t.Amount)*float64(0.01))
+
 		amountClass := "amount"
 		if t.Amount > 0 {
 			amountClass = "amount pos"
@@ -45,28 +106,34 @@ func getTransactionsHandler(h *postHandler) string {
 			amountClass = "amount neg"
 		}
 
-		html += "<div class=\"transaction\">"
-		html += "<div class=\"date\">" + strDate + "</div>"
-		html += "<div class=\"name\">" + t.Name + "</div>"
-		html += fmt.Sprintf("<div class=\"%s\">%s</div>", amountClass, amount)
-		html += "</div>"
-	}
-	html += "</div>"
+		name := html.EscapeString(t.Name)
 
-	return html
+		td := &TransactionData{
+			TransactionDate: strDate,
+			Amount:          amount,
+			AmountClass:     amountClass,
+			Name:            name,
+		}
+
+		tmpl.Execute(&htmlTmpl, td)
+	}
+
+	return htmlTmpl.String()
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("templates/home.html")
-	if err != nil {
-		log.Fatal(fmt.Sprintf("Failed: %s", err))
-	}
+func fnHomeHandler(h *postHandler, r *http.Request) string {
+	available, _ := trn.GetAvailable(h.info.db, h.info.accountId)
+	tmpl, _ := template.ParseFiles("templates/home.html")
 
 	p := &PageData{
-		Title: "sacmoney",
+		Title:       "sacmoney",
+		AccountName: html.EscapeString(h.info.accountName),
+		Available:   fmt.Sprintf("%.2f", available),
 	}
 
-	t.Execute(w, p)
+	var htmlTmpl bytes.Buffer
+	tmpl.Execute(&htmlTmpl, p)
+	return htmlTmpl.String()
 }
 
 func Run() {
@@ -75,17 +142,34 @@ func Run() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	acct, _ := setup.GetDefaultAccount(db)
-	getTransHandler := &postHandler{
-		db:        db,
-		accountId: acct,
-		handler:   getTransactionsHandler,
+	acct, accountName := setup.GetDefaultAccount(db)
+
+	info := &sacmoneyInfo{
+		db:          db,
+		accountId:   acct,
+		accountName: accountName,
+	}
+
+	listTransactionsHandler := &postHandler{
+		info:    info,
+		handler: fnTransactionsHandler,
+	}
+
+	homeHandler := &postHandler{
+		info:    info,
+		handler: fnHomeHandler,
+	}
+
+	addTransactionHandler := &postHandler{
+		info:    info,
+		handler: fnAddTransactionHandler,
 	}
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	http.HandleFunc("/", handler)
-	http.Handle("/getTransactions", getTransHandler)
+	http.Handle("/", homeHandler)
+	http.Handle("/getTransactions", listTransactionsHandler)
+	http.Handle("/addTransaction", addTransactionHandler)
 
 	fmt.Printf("Running Server..\n")
 	log.Fatal(http.ListenAndServe(":8080", nil))
