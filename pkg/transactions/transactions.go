@@ -26,7 +26,7 @@ func (t *Transaction) ToCliString(width int) string {
 	id := strconv.Itoa(int(t.Id))
 	name := t.Name
 	amount := fmt.Sprintf("$%.2f", float64(t.Amount)*float64(0.01))
-	date := t.Date.Format("02 Mon")
+	date := t.Date.Format("Mon 02 Jan")
 
 	padding := 9 // account for spacers between data elements
 	width = width - padding
@@ -140,7 +140,7 @@ const Q_LAST_TRANSACTIONS = `
 	from ledger l
 	where account_id = ?
 	order by l.transaction_date desc
-	limit 10
+	limit 50
 `
 
 const Q_TOTAL_AVAIL = `

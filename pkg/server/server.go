@@ -13,6 +13,7 @@ import (
 	setup "sacdev/sacmoney/pkg/setup"
 	trn "sacdev/sacmoney/pkg/transactions"
 	utils "sacdev/sacmoney/pkg/utils"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -40,6 +41,7 @@ func (h *postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 type TransactionData struct {
+	Id              string
 	TransactionDate string
 	Name            string
 	AmountClass     string
@@ -85,6 +87,40 @@ func fnAddTransactionHandler(h *postHandler, r *http.Request) string {
 	return fmt.Sprintf("Added transaction.::%s", sNewAmount)
 }
 
+type DeleteInfoJson struct {
+	Id string
+}
+
+func fnDeleteTransactionHandler(h *postHandler, r *http.Request) string {
+	var dij DeleteInfoJson
+	err := json.NewDecoder(r.Body).Decode(&dij)
+
+	if err != nil {
+		serr := fmt.Sprintf("Error deleting (JSON): %s", err)
+		log.Printf("%s\n", serr)
+		return serr
+	}
+
+	trnId, err := strconv.Atoi(dij.Id)
+	if err != nil {
+		serr := fmt.Sprintf("Error deleting (ID error): %s", err)
+		log.Printf("%s\n", serr)
+		return serr
+	}
+
+	err = trn.DeleteTransaction(h.info.db, int32(trnId))
+	if err != nil {
+		serr := fmt.Sprintf("Error deleting (DB): %s", err)
+		log.Printf("%s\n", serr)
+		return serr
+	}
+
+	newAmount, _ := trn.GetAvailable(h.info.db, h.info.accountId)
+	sNewAmount := fmt.Sprintf("%.2f", newAmount)
+
+	return fmt.Sprintf("Transaction deleted.::%s", sNewAmount)
+}
+
 func fnTransactionsHandler(h *postHandler, r *http.Request) string {
 	transactions, err := trn.GetLastTransactions(h.info.db, h.info.accountId)
 
@@ -96,7 +132,7 @@ func fnTransactionsHandler(h *postHandler, r *http.Request) string {
 	tmpl, _ := template.ParseFiles("templates/transaction_list.html")
 	for _, t := range transactions {
 
-		strDate := t.Date.Format("02 Mon")
+		strDate := t.Date.Format("Mon 02 Jan")
 		amount := fmt.Sprintf("%.2f", float64(t.Amount)*float64(0.01))
 
 		amountClass := "amount"
@@ -109,6 +145,7 @@ func fnTransactionsHandler(h *postHandler, r *http.Request) string {
 		name := html.EscapeString(t.Name)
 
 		td := &TransactionData{
+			Id:              fmt.Sprintf("%d", t.Id),
 			TransactionDate: strDate,
 			Amount:          amount,
 			AmountClass:     amountClass,
@@ -165,11 +202,17 @@ func Run() {
 		handler: fnAddTransactionHandler,
 	}
 
+	deleteTransactionHandler := &postHandler{
+		info:    info,
+		handler: fnDeleteTransactionHandler,
+	}
+
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	http.Handle("/", homeHandler)
 	http.Handle("/getTransactions", listTransactionsHandler)
 	http.Handle("/addTransaction", addTransactionHandler)
+	http.Handle("/deleteTransaction", deleteTransactionHandler)
 
 	fmt.Printf("Running Server..\n")
 	log.Fatal(http.ListenAndServe(":8080", nil))

@@ -8,6 +8,11 @@ body {
 	padding: 0;
 }
 
+
+.hidden {
+	display: none;
+}
+
 .page-content {
 	margin: 48px 14px;
 }
@@ -87,10 +92,25 @@ body {
 }
 
 .transaction > .amount {
-	width: 15%;
+	width: 10%;
 	box-sizing: border-box;
 	text-align: right;
 	padding-right: 12px;
+}
+
+.transaction > .actions {
+	width: 5%;
+	box-sizing: border-box;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.transaction > .actions > a {
+	cursor: pointer;
+}
+
+.transaction > .actions > a:hover {
+	color: #ff0000;
 }
 
 .neg {
@@ -162,7 +182,7 @@ body {
 	font-size: 0.9em;
 	box-shadow: -2px 2px 2px 0px #e3e3ea;
 	border: 1px solid #c9c9ce;
-	padding: 4px;
+	padding: 4px 8px;
 }
 
 .input.number {

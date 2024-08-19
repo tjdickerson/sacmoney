@@ -20,7 +20,7 @@ function add_transaction() {
 	const trans_amount = document.getElementById("input-trans-amount").value;
 
 	post("/addTransaction",
-		(rt) => { post_add_transaction(rt); },
+		(rt) => { post_change_transaction(rt); },
 		{
 			date: trans_date,
 			name: trans_name,
@@ -28,7 +28,7 @@ function add_transaction() {
 		});
 }
 
-function post_add_transaction(result) {
+function post_change_transaction(result) {
 	if (!result.indexOf("::") < 0) {
 		console.log(`Error: ${result}`);
 		return;
@@ -44,6 +44,15 @@ function post_add_transaction(result) {
 
 	load_transactions();
 	reset_fields();
+}
+
+function delete_transaction(sender) {
+	const trn_id = sender.getAttribute("tid");
+	post("/deleteTransaction",
+		(rt) => { post_change_transaction(rt) },
+		{
+			Id: trn_id,
+		});
 }
 
 /**
