@@ -55,6 +55,18 @@ function delete_transaction(sender) {
 		});
 }
 
+function add_account() {
+	const account_name = document.getElementById("account-name").value;
+	if (account_name.length.trim() < 1) return;
+
+	post("/addAccount",
+		(rt) => {
+			console.log(rt);
+		},
+		{
+			AccountName: account_name
+		});
+}
 /**
  * @param {string} uri
  * @param {function} callback

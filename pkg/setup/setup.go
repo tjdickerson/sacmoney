@@ -124,13 +124,6 @@ const CT_ACCOUNT = `
 	);
 	`
 
-const CT_CATEGORIES = `
-	create table if not exists categories (
-		id integer primary key,
-	    name varchar(100)
-	);
-	`
-
 const CT_LEDGER = `
 	create table if not exists ledger (
 		id integer primary key,
@@ -139,7 +132,29 @@ const CT_LEDGER = `
 	    name varchar(1000),
 	    account_id integer,
 	    category_id integer,
+		timestamp_added integer,
 	    foreign key(account_id) references accounts(id),
 	    foreign key(category_id) references categories(id)
+	);
+`
+
+const CT_CATEGORIES = `
+	create table if not exists categories (
+		id integer primary key,
+		account_id integer
+		name varchar(100),
+		foreign key(account_id) references accounts(id),
+	);
+`
+
+const CT_RECURRINGS = `
+	create table if not exists recurrings (
+		id integer primary key,
+		account_id integer,
+		category_id integer,
+		occurrance_date integer,
+		amount integer
+		foreign key(account_id) references accounts(id),
+		foreign key(category_id) references categories(id),
 	);
 `

@@ -18,7 +18,7 @@ body {
 }
 
 .title {
-	background: #2b463f;
+	background: linear-gradient(315deg, #0d3a2e, #265d45);
 	width: 100%;
 	color: #e8e8de;
 	padding: 8px 14px;
@@ -42,6 +42,28 @@ body {
 .title > a:visited {
 	text-decoration: none;
 	color: #e8e8de;
+}
+
+.title > .menu-links {
+	display: flex;
+	align-self: end;
+	padding: 3px 70px;
+	font-size: 0.7em;
+	color: #b7d4cc;
+}
+
+.title > .menu-links > .menu-link {
+}
+
+.title > .menu-links > .menu-link a {
+	color: #b7d4cc;
+	text-decoration: none;
+	padding: 0 18px;
+}
+
+.title > .menu-links > .menu-link a:hover {
+	color: #37cca3;
+	text-decoration: none;
 }
 
 .floaty-box {

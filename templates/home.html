@@ -7,8 +7,7 @@
 <html>
 
 <body onload="page_load();">
-	<div class="title"><img src="/static/SacHead.svg" /><a href="/">{{.Title}}</a></div>
-
+	{{template "tmpl_title" . }}
 	<div class="page-content">
 		<div class="account-info">
 			<div class="account-name">{{.AccountName}}</div>

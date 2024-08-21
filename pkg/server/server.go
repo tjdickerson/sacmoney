@@ -160,7 +160,7 @@ func fnTransactionsHandler(h *postHandler, r *http.Request) string {
 
 func fnHomeHandler(h *postHandler, r *http.Request) string {
 	available, _ := trn.GetAvailable(h.info.db, h.info.accountId)
-	tmpl, _ := template.ParseFiles("templates/home.html")
+	tmpl, _ := template.ParseFiles("templates/home.html", "templates/tmpl_title.html")
 
 	p := &PageData{
 		Title:       "sacmoney",

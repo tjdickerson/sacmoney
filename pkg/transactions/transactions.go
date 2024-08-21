@@ -3,7 +3,7 @@ package transactions
 import (
 	"database/sql"
 	"fmt"
-	utils "sacdev/sacmoney/pkg/utils"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -66,14 +66,22 @@ func GetLastTransactions(db *sql.DB, accountId int32) ([]Transaction, error) {
 	var name string
 	var amount int64
 	var date int64
+	var utcDate time.Time
+	utc, _ := time.LoadLocation("UTC")
+
 	for rows.Next() {
-		rows.Scan(&id, &name, &amount, &date)
+		err = rows.Scan(&id, &name, &amount, &date)
+		if err != nil {
+			log.Printf("Error : %s\n", err)
+		}
+
+		utcDate = time.UnixMilli(date).In(utc)
 
 		results = append(results, Transaction{
 			Id:     id,
 			Name:   name,
 			Amount: amount,
-			Date:   time.UnixMilli(date),
+			Date:   utcDate,
 		})
 	}
 
@@ -86,8 +94,13 @@ func AddTransaction(db *sql.DB, accountId int32, transaction Transaction) error 
 		return err
 	}
 
-	transaction.Date = utils.TimeToUtc(&transaction.Date)
-	_, err = stmt.Exec(accountId, transaction.Name, transaction.Amount, transaction.Date.UnixMilli())
+	now := time.Now()
+	_, err = stmt.Exec(
+		accountId,
+		transaction.Name,
+		transaction.Amount,
+		transaction.Date.UnixMilli(),
+		now)
 	return err
 }
 
@@ -128,8 +141,9 @@ const INS_TRANSACTION = `
 		  account_id
 		, name
 	    , amount
-	    , transaction_date)
-	values ( ?, ?, ?, ?)
+	    , transaction_date
+	    , timestamp_added)
+	values ( ?, ?, ?, ?, ?)
 `
 
 const Q_LAST_TRANSACTIONS = `
@@ -140,6 +154,7 @@ const Q_LAST_TRANSACTIONS = `
 	from ledger l
 	where account_id = ?
 	order by l.transaction_date desc
+			,l.timestamp_added desc
 	limit 50
 `
 
