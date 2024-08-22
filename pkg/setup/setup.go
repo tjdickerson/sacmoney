@@ -65,6 +65,7 @@ func GetDefaultAccount(db *sql.DB) (int32, string) {
 		result.Scan(&accountId, &accountName)
 	}
 
+	log.Printf("Using default Account: %s\n", accountName)
 	return accountId, accountName
 }
 
@@ -75,7 +76,7 @@ func CreateNewAccount(db *sql.DB, name string) error {
 		return err
 	}
 
-	log.Printf("About to insert the thing...\n")
+	log.Printf("About to insert the thing: %s...\n", name)
 
 	_, err = stmt.Exec(name)
 	if err != nil {
@@ -96,6 +97,7 @@ func createSchema(db_path string) (*sql.DB, error) {
 	createTable(db, CT_ACCOUNT)
 	createTable(db, CT_CATEGORIES)
 	createTable(db, CT_LEDGER)
+	createTable(db, CT_RECURRINGS)
 
 	return db, nil
 }
@@ -104,13 +106,13 @@ func createTable(db *sql.DB, statement string) error {
 
 	stmt, err := db.Prepare(statement)
 	if err != nil {
-		log.Printf("Failure preparing statement: %s\n", err)
+		log.Printf("Failure preparing statement: %s\n%s\n", err, statement)
 		return err
 	}
 
 	_, err = stmt.Exec()
 	if err != nil {
-		log.Printf("Failure executing statement: %s\n", err)
+		log.Printf("Failure executing statement: %s\n%s\n", err, statement)
 		return err
 	}
 
@@ -143,18 +145,21 @@ const CT_CATEGORIES = `
 		id integer primary key,
 		account_id integer
 		name varchar(100),
-		foreign key(account_id) references accounts(id),
+		foreign key(account_id) references accounts(id)
 	);
 `
 
+// TODO: move this out of setup
 const CT_RECURRINGS = `
 	create table if not exists recurrings (
 		id integer primary key,
 		account_id integer,
 		category_id integer,
-		occurrance_date integer,
-		amount integer
+		name varchar(100),
+		occurrence_day integer,
+		amount integer,
+	    timestamp_added integer,
 		foreign key(account_id) references accounts(id),
-		foreign key(category_id) references categories(id),
+		foreign key(category_id) references categories(id)
 	);
 `

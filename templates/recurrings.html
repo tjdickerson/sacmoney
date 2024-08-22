@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<head>
+	<title>sacmoney - Recurring Transactions</title>
+	<script type="text/javascript" src="/static/api.js"></script>
+	<link rel="stylesheet" href="/static/sacmoney.css">
+</head>
+<html>
+
+<body onload="page_load_recurrings();">
+	{{template "tmpl_title" . }}
+	<div class="page-content">
+
+		<div id="new-recurring" class="floaty-box new-recurring">
+			<div class="small-title">New Recurring Transaction</div>
+			<div class="trans-input-bar">
+				<div class="trans-date-input">
+					<div class="smaller-title">Transaction Date</div>
+					<input id="input-recurring-date" class="input" type="date" value="11"></input>
+				</div>
+				<div class="recurring-name-input">
+					<div class="smaller-title">Description/Name</div>
+					<input id="input-recurring-name" class="input" type="text" placeholder="Car Insurance"></input>
+				</div>
+				<div class="recurring-amount-input">
+					<div class="smaller-title">Amount</div>
+					<input id="input-recurring-amount" class="input number" type="number" placeholder="-152.45"></input>
+				</div>
+				<div class="recurring-add-button">
+					<button id="btn-add" class="btn-link" onclick="add_recurring();">Add</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="recurring-transactions-container" class="floaty-box recurring-transactions-container">
+			<div id="recurring-transactions" class="recurring-transactions">
+			</div>
+		</div>
+
+
+	</div>
+</body>
+
+
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<script type="text/javascript" src="/static/api.js"></script>
+	<link rel="stylesheet" href="/static/sacmoney.css">
+</head>
+
+<body>
+	<div class="title"><img src="/static/SacHead.svg" /><a href="/">{{.Title}}</a></div>
+
+	<div class="page-content">
+		<div>New Account </div>
+		<div class="floaty-box">
+			<input id="account-name" type="text" class="input" placeholder="Account Name"></input>
+			<button id="btn-add" class="btn-link" onclick="add_account();">Add</button>
+		</div>
+
+
+		<div class="floaty-box">
+			{{range $name := .Accounts}}
+			<div class="account-name">{{$name}}</div>
+			{{end}}
+		</div>
+	</div>
+</body>
+
+</html>

@@ -67,18 +67,21 @@ body {
 }
 
 .floaty-box {
+	width: 80%;
+    margin: auto;	
 	box-sizing: border-box;
 	box-shadow: -2px 2px 2px 0px #e3e3ea;
 	border: 1px solid #f7f7f7;
+	padding: 8px;
+	padding-bottom: 12px;
+	margin: auto;
+	margin-bottom: 16px;
 }
 
 .trans-container {
 	display: flex;
 	flex-direction: column;
-	width: 80%;
-	margin: auto;
 	box-sizing: border-box;
-	padding: 14px;
 }
 
 .transactions {
@@ -171,11 +174,6 @@ body {
 }
 
 .new-trans {
-	width: 80%;
-	padding: 8px;
-	padding-bottom: 12px;
-	margin: auto;
-	margin-bottom: 16px;
 }
 
 .small-title {

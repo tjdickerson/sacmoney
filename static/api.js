@@ -1,5 +1,5 @@
 
-function page_load() {
+function page_load_transactions() {
 	const input_date = document.getElementById("input-trans-date");
 	input_date.valueAsDate = new Date();
 	reset_fields();
@@ -7,10 +7,21 @@ function page_load() {
 	handle_listeners();
 }
 
+function page_load_recurrings() {
+	load_recurrings();
+}
+
 function load_transactions() {
 	request("/getTransactions", (responseText) => {
 		let trans_container = document.getElementById("transactions");
 		trans_container.innerHTML = responseText;
+	});
+}
+
+function load_recurrings() {
+	request("/getRecurrings", (responseText) => {
+		let recurring_container = document.getElementById("recurring-transactions");
+		recurring_container.innerHTML = responseText;
 	});
 }
 
@@ -25,6 +36,20 @@ function add_transaction() {
 			date: trans_date,
 			name: trans_name,
 			amount: trans_amount,
+		});
+}
+
+function add_recurring() {
+	const recurring_date = document.getElementById("input-recurring-date").value;
+	const recurring_name = document.getElementById("input-recurring-name").value;
+	const recurring_amount = document.getElementById("input-recurring-amount").value;
+
+	post("/addRecurring",
+		(rt) => { post_change_recurrings(rt); },
+		{
+			date: recurring_date,
+			name: recurring_name,
+			amount: recurring_amount,
 		});
 }
 
@@ -46,6 +71,11 @@ function post_change_transaction(result) {
 	reset_fields();
 }
 
+function post_change_recurrings(result) {
+	console.log(result)
+	load_recurrings();
+}
+
 function delete_transaction(sender) {
 	const trn_id = sender.getAttribute("tid");
 	post("/deleteTransaction",
@@ -57,16 +87,17 @@ function delete_transaction(sender) {
 
 function add_account() {
 	const account_name = document.getElementById("account-name").value;
-	if (account_name.length.trim() < 1) return;
+	if (account_name.trim().length < 1) return;
 
 	post("/addAccount",
 		(rt) => {
 			console.log(rt);
 		},
 		{
-			AccountName: account_name
+			Name: account_name
 		});
 }
+
 /**
  * @param {string} uri
  * @param {function} callback
