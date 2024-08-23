@@ -10,13 +10,13 @@ import (
 	"io"
 	"log"
 	"net/http"
-	rec "sacdev/sacmoney/pkg/recurrings"
-	setup "sacdev/sacmoney/pkg/setup"
-	trn "sacdev/sacmoney/pkg/transactions"
-	utils "sacdev/sacmoney/pkg/utils"
 	"strconv"
 	"strings"
 	"time"
+	rec "tjdickerson/sacmoney/pkg/recurrings"
+	setup "tjdickerson/sacmoney/pkg/setup"
+	trn "tjdickerson/sacmoney/pkg/transactions"
+	utils "tjdickerson/sacmoney/pkg/utils"
 )
 
 type sacmoneyInfo struct {
@@ -325,7 +325,6 @@ func fnRecurringsHandler(h *postHandler, r *http.Request) string {
 		tmpl.Execute(&htmlTmpl, td)
 	}
 
-	log.Printf("Returning:\n%s\n", htmlTmpl.String())
 	return htmlTmpl.String()
 }
 

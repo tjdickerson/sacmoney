@@ -7,12 +7,12 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	setup "sacdev/sacmoney/pkg/setup"
-	trn "sacdev/sacmoney/pkg/transactions"
-	utils "sacdev/sacmoney/pkg/utils"
 	"strconv"
 	"strings"
 	"time"
+	setup "tjdickerson/sacmoney/pkg/setup"
+	trn "tjdickerson/sacmoney/pkg/transactions"
+	utils "tjdickerson/sacmoney/pkg/utils"
 )
 
 const WIDTH = 100

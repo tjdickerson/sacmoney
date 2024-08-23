@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	sacm "sacdev/sacmoney"
+	cli "tjdickerson/sacmoney/pkg/cli"
 )
 
 func main() {
 	fmt.Printf("sacmoney\n")
-	sacm.DoCli()
+	cli.Run()
 }

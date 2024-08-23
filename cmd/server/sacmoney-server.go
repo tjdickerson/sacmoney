@@ -1,9 +1,9 @@
 package main
 
 import (
-	sacm "sacdev/sacmoney"
+	server "tjdickerson/sacmoney/pkg/server"
 )
 
 func main() {
-	sacm.RunServer()
+	server.Run()
 }
