@@ -1,33 +1,32 @@
-package recurrings
+package database
 
 import (
 	"database/sql"
-	"log"
-	"time"
+	"fmt"
 )
 
-type RecurringTransaction struct {
-	Id     int32
+type Recurring struct {
+	Id     int
 	Name   string
 	Amount int64
 	Day    uint8
 }
 
-func GetRecurringTransactions(db *sql.DB, accountId int32) ([]RecurringTransaction, error) {
-	stmt, err := db.Prepare(Q_LAST_RECURRING_TRANSACTIONS)
+func fetchAllRecurrings() ([]Recurring, error) {
+	stmt, err := dbc.db.Prepare(Q_RECURRING_TRANSACTIONS)
 	if err != nil {
 		return nil, err
 	}
 
-	rows, err := stmt.Query(accountId)
+	rows, err := stmt.Query(sql.Named("account_id", dbc.currentAccountId))
 	if err != nil {
 		return nil, err
 	}
 
 	defer rows.Close()
 
-	var results []RecurringTransaction
-	var id int32
+	var results []Recurring
+	var id int
 	var name string
 	var amount int64
 	var day uint8
@@ -35,10 +34,10 @@ func GetRecurringTransactions(db *sql.DB, accountId int32) ([]RecurringTransacti
 	for rows.Next() {
 		err = rows.Scan(&id, &name, &amount, &day)
 		if err != nil {
-			log.Printf("Error : %s\n", err)
+			return nil, fmt.Errorf("Error reading recurring transactions : %s", err)
 		}
 
-		results = append(results, RecurringTransaction{
+		results = append(results, Recurring{
 			Id:     id,
 			Name:   name,
 			Amount: amount,
@@ -49,33 +48,34 @@ func GetRecurringTransactions(db *sql.DB, accountId int32) ([]RecurringTransacti
 	return results, nil
 }
 
-func AddRecurringTransaction(db *sql.DB, accountId int32, recurring *RecurringTransaction) error {
-	stmt, err := db.Prepare(INS_RECURRING_TRANSACTION)
+func (r *Recurring) insert() error {
+	stmt, err := dbc.db.Prepare(INS_RECURRING_TRANSACTION)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error preparing recurring for insert: %s", err)
 	}
 
-	now := time.Now()
+	// values (@account_id, @name, @amount, @occurrence_day, @timestamp_added)
 	_, err = stmt.Exec(
-		accountId,
-		recurring.Name,
-		recurring.Amount,
-		recurring.Day,
-		now)
-	return err
-}
-
-func DeleteTransaction(db *sql.DB, recurringId int32) error {
-	stmt, err := db.Prepare(DEL_RECURRING_TRANSACTION)
+		sql.Named("account_id", dbc.currentAccountId),
+		sql.Named("name", r.Name),
+		sql.Named("amount", r.Amount),
+		sql.Named("occurrence_day", r.Day),
+	)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error inserting recurring: %s", err)
 	}
 
-	_, err = stmt.Exec(recurringId)
-	return err
+	return nil
 }
 
-// TODO: move this out of setup
+func (r *Recurring) update() error {
+	return fmt.Errorf("Not yet implemented")
+}
+
+func (r *Recurring) delete() error {
+	return fmt.Errorf("Not yet implemented")
+}
+
 const CT_RECURRINGS = `
 	create table if not exists recurrings (
 		id integer primary key,
@@ -90,16 +90,15 @@ const CT_RECURRINGS = `
 	);
 `
 
-const Q_LAST_RECURRING_TRANSACTIONS = `
+const Q_RECURRING_TRANSACTIONS = `
 	select rt.id
 	     , rt.name
 		 , rt.amount
 	     , rt.occurrence_day
 	from recurrings rt
-	where account_id = ?
+	where account_id = @account_id
 	order by rt.occurrence_day desc
 			,rt.timestamp_added desc
-	limit 50
 `
 
 const INS_RECURRING_TRANSACTION = `
@@ -109,7 +108,7 @@ const INS_RECURRING_TRANSACTION = `
 	    , amount
 	    , occurrence_day
 	    , timestamp_added)
-	values ( ?, ?, ?, ?, ?)
+	values (@account_id, @name, @amount, @occurrence_day, @timestamp_added)
 `
 const DEL_RECURRING_TRANSACTION = `
 	delete from recurrings where id = ?
