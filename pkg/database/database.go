@@ -24,6 +24,7 @@ var (
 )
 
 const DB_PATH = "sacmoney.db"
+const DB_INIT_ERR = "Database not initialized. Call InitDatabase() before calling any other database functions. (Also defer CloseDatabase())"
 
 func InitDatabase() error {
 	_, existErr := os.Stat(DB_PATH)
@@ -69,8 +70,17 @@ func FetchAllRecurrings() ([]Recurring, error) {
 	return fetchAllRecurrings()
 }
 
+func FetchAllAccounts() ([]Account, error) {
+	return fetchAllAccounts()
+}
+
 func GetDefaultAccount() (Account, error) {
-	return getAccount(1)
+	if dbc.db == nil {
+		return Account{}, fmt.Errorf(DB_INIT_ERR)
+	}
+	account, err := getAccount(1)
+	dbc.currentAccountId = account.Id
+	return account, err
 }
 
 func HasAccount() bool {

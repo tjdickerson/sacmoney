@@ -59,6 +59,35 @@ func getAccount(id int) (Account, error) {
 
 }
 
+func fetchAllAccounts() ([]Account, error) {
+	stmt, err := dbc.db.Prepare("select a.id, a.name from accounts a order by a.Name")
+	if err != nil {
+		return nil, fmt.Errorf("Error preparing to fetch accounts: %s", err)
+	}
+
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, fmt.Errorf("Error fetching accounts: %s", err)
+	}
+
+	var id int
+	var name string
+	var accounts []Account
+	for rows.Next() {
+		err = rows.Scan(&id, &name)
+		if err != nil {
+			return nil, fmt.Errorf("Error reading accounts: %s", err)
+		}
+
+		accounts = append(accounts, Account{
+			Id:   id,
+			Name: name,
+		})
+	}
+
+	return accounts, nil
+}
+
 const Q_GET_ACCOUNT = `
 	select a.id
 	     , a.name

@@ -1,0 +1,23 @@
+{{define core_tmpl}}
+<!DOCTYPE html>
+
+
+<head>
+	<title>sacmoney - Home</title>
+	<script type="text/javascript" src="/static/js/pi.js"></script>
+	<link rel="stylesheet" href="/static/css/sacmoney.css">
+</head>
+<html>
+
+<body>
+
+	{{template title_tmpl .}}
+
+	<div class="page-content">
+		{{template .PageContent}}
+	</div>
+
+</body>
+
+</html>
+{{end}}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<head>
+	<title>sacmoney - Recurring Transactions</title>
+	<script type="text/javascript" src="/static/js/api.js"></script>
+	<link rel="stylesheet" href="/static/css/sacmoney.css">
+</head>
+<html>
+
+<body onload="page_load_recurrings()">
+
+	{{template "title_tmpl" .}}
+
+	<div class="page-content">
+		<div class="floaty-box current-account">
+			<div class="name">{{.AccountName}}</div>
+		</div>
+
+		<div class="floaty-box flex-spaced-centered new-transaction">
+			<div class="small-title">New Recurring Transaction</div>
+			<div class="flex-spaced-centered trans-input-bar">
+				<div class="trans-date-input">
+					<div class="small-lbl">Occurrence Date</div>
+					<input id="input-recurring-date" class="input" type="date" value="2024-08-11"></input>
+				</div>
+				<div class="trans-name-input">
+					<div class="small-lbl">Description/Name</div>
+					<input id="input-recurring-name" class="input" type="text" placeholder="Paycheck"></input>
+				</div>
+				<div class="trans-amount-input">
+					<div class="small-lbl">Amount</div>
+					<input id="input-recurring-amount" class="input number" type="number" placeholder="2103.12"></input>
+				</div>
+				<div class="trans-add-button">
+					<div class="small-lbl">&nbsp;</div>
+					<button id="btn-add" class="btn-link" onclick="add_recurring_transaction();">Add</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="floaty-box transactions">
+			{{range $recurr := .RecurringTransactions}}
+			<div class="transaction">
+				<div class="hidden">{{$recurr.Id}}</div>
+				<div class="date"> {{$recurr.Day}} </div>
+				<div class="name">{{$recurr.Name}}</div>
+				<div class="amount {{if $recurr.IsNeg}}neg{{else}}pos{{end}}">{{$recurr.Amount}}</div>
+				<div class="actions"><a tid="{{$recurr.Id}}" onclick="delete_recurring_transaction(this);">&#x2716;</a>
+				</div>
+			</div>
+			{{end}}
+		</div>
+	</div>
+
+</body>
+
+</html>

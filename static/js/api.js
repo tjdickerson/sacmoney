@@ -3,26 +3,13 @@ function page_load_transactions() {
 	const input_date = document.getElementById("input-trans-date");
 	input_date.valueAsDate = new Date();
 	reset_fields();
-	load_transactions();
 	handle_listeners();
 }
 
 function page_load_recurrings() {
-	load_recurrings();
 }
 
-function load_transactions() {
-	request("/getTransactions", (responseText) => {
-		let trans_container = document.getElementById("transactions");
-		trans_container.innerHTML = responseText;
-	});
-}
-
-function load_recurrings() {
-	request("/getRecurrings", (responseText) => {
-		let recurring_container = document.getElementById("recurring-transactions");
-		recurring_container.innerHTML = responseText;
-	});
+function page_load_accounts() {
 }
 
 function add_transaction() {
@@ -31,21 +18,22 @@ function add_transaction() {
 	const trans_amount = document.getElementById("input-trans-amount").value;
 
 	post("/addTransaction",
-		(rt) => { post_change_transaction(rt); },
+		(rt) => { after_post(rt) },
 		{
+			id: "0",
 			date: trans_date,
 			name: trans_name,
 			amount: trans_amount,
 		});
 }
 
-function add_recurring() {
+function add_recurring_transaction() {
 	const recurring_date = document.getElementById("input-recurring-date").value;
 	const recurring_name = document.getElementById("input-recurring-name").value;
 	const recurring_amount = document.getElementById("input-recurring-amount").value;
 
 	post("/addRecurring",
-		(rt) => { post_change_recurrings(rt); },
+		(rt) => { after_post(rt); },
 		{
 			date: recurring_date,
 			name: recurring_name,
@@ -53,28 +41,29 @@ function add_recurring() {
 		});
 }
 
-function post_change_transaction(result) {
-	if (!result.indexOf("::") < 0) {
-		console.log(`Error: ${result}`);
-		return;
-	}
+function add_account() {
+	const account_name = document.getElementById("input-account-name").value;
 
-	const res = result.split("::");
-	const status = res[0];
-	const newAvailable = res[1];
-	const divAvail = document.getElementById("account-available");
-
-	console.log(status);
-	divAvail.innerText = newAvailable;
-
-	load_transactions();
-	reset_fields();
+	post("/addAccount",
+		(rt) => { after_post(rt); },
+		{
+			name: account_name,
+		});
 }
 
-function post_change_recurrings(result) {
+function after_post(result) {
 	console.log(result)
-	load_recurrings();
+	if (result === "SUCCESS") {
+		window.location.reload();
+	} else {
+		show_error(result);
+	}
 }
+
+function show_error(error) {
+	alert(error);
+}
+
 
 function delete_transaction(sender) {
 	const trn_id = sender.getAttribute("tid");
@@ -82,19 +71,6 @@ function delete_transaction(sender) {
 		(rt) => { post_change_transaction(rt) },
 		{
 			Id: trn_id,
-		});
-}
-
-function add_account() {
-	const account_name = document.getElementById("account-name").value;
-	if (account_name.trim().length < 1) return;
-
-	post("/addAccount",
-		(rt) => {
-			console.log(rt);
-		},
-		{
-			Name: account_name
 		});
 }
 

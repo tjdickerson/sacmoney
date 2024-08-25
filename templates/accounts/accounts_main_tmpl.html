@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<head>
+	<title>sacmoney - Accounts</title>
+	<script type="text/javascript" src="/static/js/api.js"></script>
+	<link rel="stylesheet" href="/static/css/sacmoney.css">
+</head>
+<html>
+
+<body onload="page_load_accounts()">
+
+	{{template "title_tmpl" .}}
+
+	<div class="page-content">
+		<div class="floaty-box flex-spaced-centered new-transaction">
+			<div class="small-title">New Account</div>
+			<div class="flex-spaced-centered trans-input-bar">
+				<div class="trans-name-input">
+					<div class="small-lbl">Name</div>
+					<input id="input-account-name" class="input" type="text" placeholder="Savings"></input>
+				</div>
+				<div class="trans-add-button">
+					<div class="small-lbl">&nbsp;</div>
+					<button id="btn-add" class="btn-link" onclick="add_account();">Add</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="floaty-box transactions">
+			{{range $acct := .Accounts}}
+			<div class="transaction">
+				<div class="hidden">{{$acct.Id}}</div>
+				<div class="name">{{$acct.Name}}</div>
+			</div>
+			{{end}}
+		</div>
+	</div>
+	</div>
+
+</body>
+
+</html>

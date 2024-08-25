@@ -1,0 +1,212 @@
+
+html {
+	font-family: verdana;
+	font-size: 18px;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+}
+
+
+.hidden {
+	display: none;
+}
+
+
+.page-content {
+	margin: 48px 20px;
+}
+
+.neg {
+	color: #c30808;
+}
+
+.pos {
+	color: #189d4f;
+}
+
+.floaty-box {
+	width: 80%;
+	max-width: 1100px;
+	box-sizing: border-box;
+	box-shadow: -2px 2px 2px 0px #e3e3ea;
+	border: 1px solid #f7f7f7;
+	margin: auto;
+	margin-bottom: 16px;
+	padding: 12px 32px
+}
+
+.input {
+	font-size: 14px;
+	box-shadow: -2px 2px 2px 0px #e3e3ea;
+	border: 1px solid #c9c9ce;
+	padding: 4px 8px;
+}
+
+.input.number {
+	text-align: right;
+}
+
+.input::placeholder {
+	color: #e3e3e3;
+}
+
+.input:focus {
+	border: 1px solid #c9c9fe;
+	outline: none;
+}
+
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.btn-link {
+	padding: 5px 12px;
+	background: #fafafa;
+	border: 1px solid #c0c0c0;
+}
+
+.btn-link:hover {
+	background: #39a77c;
+    border: 1px solid #9edeb5;
+    color: #d9ffe4;
+}
+
+
+.small-title {
+	font-size: 12px
+}
+
+.small-lbl {
+	font-size: 10px
+}
+
+.flex-spaced-centered {
+	display: flex;
+	justify-content: space-between;
+    align-items: center;
+}
+
+/*
+* transactions page
+*/
+.current-account {
+	display: flex;
+	justify-content: space-between;
+	box-shadow: none;
+	border: none;
+}
+
+.new-transaction {
+}
+
+.trans-input-bar {
+}
+
+.trans-input-bar > div {
+	padding: 0 12px;
+}
+
+.transaction {
+	display: flex;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 4px;
+	padding: 7px;
+    font-size: 14px;
+	border-bottom: 1px solid #f1f1f1;
+	color: #6f6f6f;
+}
+
+.transaction > .name {
+	width: 70%;
+	box-sizing: border-box;
+}
+
+.transaction > .date {
+	width: 15%;
+	box-sizing: border-box;
+	text-align: left;
+	padding-left: 12px;
+    color: #9b9b9b;
+}
+
+.transaction > .amount {
+	width: 10%;
+	box-sizing: border-box;
+	text-align: right;
+	padding-right: 12px;
+}
+
+.transaction > .actions {
+	width: 5%;
+	box-sizing: border-box;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.transaction > .actions > a {
+	cursor: pointer;
+}
+
+.transaction > .actions > a:hover {
+	color: #ff0000;
+}
+/*
+* title bar 
+*/
+.title-bar {
+	background: linear-gradient(315deg, #0d3a2e, #265d45);
+	width: 100%;
+	color: #e8e8de;
+	padding: 8px 14px;
+	margin: 0;
+	box-shadow: -2px 2px 2px 0px #e3e3ea;
+	border-bottom: 1px solid #57855d;
+	height: 40px;
+	display: flex;
+	align-items: center;
+}
+
+.title-bar > img {
+	height: 50px;
+}
+
+.title-bar > a {
+	text-decoration: none;
+	color: #e8e8de;
+}
+
+.title-bar > a:visited {
+	text-decoration: none;
+	color: #e8e8de;
+}
+
+.title-bar > .menu-links {
+	display: flex;
+	align-self: end;
+	padding: 3px 70px;
+	font-size: 14px;
+	color: #b7d4cc;
+}
+
+.title-bar > .menu-links > .menu-link {
+}
+
+.title-bar > .menu-links > .menu-link a {
+	color: #b7d4cc;
+	text-decoration: none;
+	padding: 0 18px;
+}
+
+.title-bar > .menu-links > .menu-link a:hover {
+	color: #37cca3;
+	text-decoration: none;
+}
