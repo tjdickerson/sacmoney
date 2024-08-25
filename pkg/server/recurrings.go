@@ -44,8 +44,21 @@ func (r *RecurringData) toDbRecurring() (db.Recurring, error) {
 	amount := utils.GetCentsFromString(r.Amount)
 	day, err := strconv.Atoi(r.Day)
 
+	var outErr string = ""
 	if err != nil {
-		return db.Recurring{}, fmt.Errorf("Failed to parse Day: %s", err)
+		outErr = outErr + "Day of occurrence required.\n"
+	} else {
+		if day < 1 || day > 28 {
+			outErr = outErr + "Day needs to be between 1-28 inclusive.\n"
+		}
+	}
+
+	if len(name) == 0 {
+		outErr = outErr + "Name required.\n"
+	}
+
+	if len(outErr) > 0 {
+		return db.Recurring{}, fmt.Errorf("%s", outErr)
 	}
 
 	return db.Recurring{
@@ -64,8 +77,8 @@ func RecurringMainHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(fmt.Sprintf("Error parsing template: %s", err))
 	}
 
-	if servctx == nil {
-		handleNoAccount(w)
+	if servctx.currentAccount == nil {
+		handleNoAccount(w, t)
 		return
 	}
 
@@ -108,6 +121,7 @@ func AddRecurringHandler(w http.ResponseWriter, r *http.Request) {
 		outErr := fmt.Sprintf("Failed to add recurring transaction: %s", err)
 		log.Printf("Error: %s\n", outErr)
 		io.WriteString(w, outErr)
+		return
 	}
 
 	err = db.Insert(&recurring)
@@ -115,7 +129,40 @@ func AddRecurringHandler(w http.ResponseWriter, r *http.Request) {
 		outErr := fmt.Sprintf("Failed to add recurring transaction: %s", err)
 		log.Printf("Error: %s\n", outErr)
 		io.WriteString(w, outErr)
+		return
 	}
 
+	io.WriteString(w, "SUCCESS")
+}
+
+func DeleteRecurringHandler(w http.ResponseWriter, r *http.Request) {
+	var data RecurringData
+	err := json.NewDecoder(r.Body).Decode(&data)
+
+	if err != nil {
+		outErr := fmt.Sprintf("Failed to decode recurring transaction: %s", err)
+		log.Printf("Error: %s\n", outErr)
+		io.WriteString(w, outErr)
+		return
+	}
+
+	id, err := strconv.Atoi(data.Id)
+	if err != nil {
+		outErr := fmt.Sprintf("Failed to convert recurring transaction id: %s", err)
+		log.Printf("Error: %s\n", outErr)
+		io.WriteString(w, outErr)
+		return
+	}
+
+	temp := db.Recurring{Id: id}
+	err = db.Delete(&temp)
+	if err != nil {
+		outErr := fmt.Sprintf("Error deleting recurring transaction: %s", err)
+		log.Printf("Error: %s\n", outErr)
+		io.WriteString(w, outErr)
+		return
+	}
+
+	RefreshAccount()
 	io.WriteString(w, "SUCCESS")
 }

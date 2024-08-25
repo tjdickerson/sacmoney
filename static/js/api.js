@@ -1,21 +1,10 @@
 
-function page_load_transactions() {
-	const input_date = document.getElementById("input-trans-date");
-	input_date.valueAsDate = new Date();
-	reset_fields();
-	handle_listeners();
-}
-
-function page_load_recurrings() {
-}
-
-function page_load_accounts() {
-}
-
 function add_transaction() {
 	const trans_date = document.getElementById("input-trans-date").value;
 	const trans_name = document.getElementById("input-trans-name").value;
 	const trans_amount = document.getElementById("input-trans-amount").value;
+	const form = document.getElementById("form-new-transaction")
+	console.log(form)
 
 	post("/addTransaction",
 		(rt) => { after_post(rt) },
@@ -35,7 +24,7 @@ function add_recurring_transaction() {
 	post("/addRecurring",
 		(rt) => { after_post(rt); },
 		{
-			date: recurring_date,
+			day: recurring_date,
 			name: recurring_name,
 			amount: recurring_amount,
 		});
@@ -61,23 +50,39 @@ function after_post(result) {
 }
 
 function show_error(error) {
-	alert(error);
+	const error_display = document.getElementById("error-display");
+	const error_text = document.getElementById("error-text");
+
+	error_display.style.display = "block";
+	error_text.innerHTML = error;
+
+	setTimeout(() => {
+		error_display.style.display = "none";
+	}, 5000)
 }
 
 
 function delete_transaction(sender) {
 	const trn_id = sender.getAttribute("tid");
 	post("/deleteTransaction",
-		(rt) => { post_change_transaction(rt) },
+		(rt) => { after_post(rt) },
 		{
 			Id: trn_id,
+		});
+}
+
+function delete_recurring_transaction(sender) {
+	const recurr_id = sender.getAttribute("rid");
+	post("/deleteRecurring",
+		(rt) => { after_post(rt) },
+		{
+			Id: recurr_id,
 		});
 }
 
 /**
  * @param {string} uri
  * @param {function} callback
- * @returns {string}
  * */
 function request(uri, callback) {
 	const xhr = new XMLHttpRequest();
@@ -93,6 +98,11 @@ function request(uri, callback) {
 	xhr.send();
 }
 
+/**
+ * @param {string} uri
+ * @param {function} callback
+ * @param {JSONObject} data
+ * */
 function post(uri, callback, data) {
 	const xhr = new XMLHttpRequest();
 	xhr.open("POST", uri);
@@ -110,21 +120,10 @@ function post(uri, callback, data) {
 	xhr.send(send_data);
 }
 
+function page_load_transactions() {
+	const input_date = document.getElementById("input-trans-date");
+	input_date.valueAsDate = new Date();
 
-function handle_listeners() {
-	const input_amount = document.getElementById("input-trans-amount");
-	const add_btn = document.getElementById("btn-add");
-
-	input_amount.addEventListener("keypress", function(event) {
-		if (event.key === "Enter") {
-			event.preventDefault();
-			add_btn.click();
-		}
-	});
-}
-
-
-function reset_fields() {
 	const input_name = document.getElementById("input-trans-name");
 	const input_amount = document.getElementById("input-trans-amount");
 
@@ -132,7 +131,43 @@ function reset_fields() {
 	input_amount.value = "";
 
 	input_name.focus();
+
+	set_default_button(input_amount);
 }
 
+function page_load_recurrings() {
+	const input_date = document.getElementById("input-recurring-date");
+	const input_name = document.getElementById("input-recurring-name");
+	const input_amount = document.getElementById("input-recurring-amount");
 
+	input_date.value = "";
+	input_name.value = "";
+	input_amount.value = "";
+
+	input_date.focus();
+
+	set_default_button(input_amount);
+}
+
+function page_load_accounts() {
+	const input_name = document.getElementById("input-account-name");
+
+	input_name.value = "";
+	input_name.focus();
+
+	set_default_button(input_name);
+}
+
+/**
+* @param {HTMLElement} target_el
+**/
+function set_default_button(target_el) {
+	const add_btn = document.getElementById("btn-add");
+	target_el.addEventListener("keypress", function(event) {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			add_btn.click();
+		}
+	});
+}
 

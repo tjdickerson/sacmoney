@@ -32,11 +32,21 @@ func convertAccount(a *db.Account) AccountData {
 	}
 }
 
-func (r *AccountData) toDbAccount() db.Account {
+func (r *AccountData) toDbAccount() (db.Account, error) {
 	name := html.EscapeString(strings.TrimSpace(r.Name))
+
+	outErr := ""
+	if len(name) == 0 {
+		outErr = outErr + "Name required.\n"
+	}
+
+	if len(outErr) > 0 {
+		return db.Account{}, fmt.Errorf("%s", outErr)
+	}
+
 	return db.Account{
 		Name: name,
-	}
+	}, nil
 }
 
 func AccountMainHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,8 +70,15 @@ func AccountMainHandler(w http.ResponseWriter, r *http.Request) {
 		accountData = append(accountData, convertAccount(&dbAccount))
 	}
 
+	var currentAccountName string
+	if servctx.currentAccount == nil {
+		currentAccountName = "Create new account."
+	} else {
+		currentAccountName = servctx.currentAccount.Name
+	}
+
 	data := AccountMain{
-		CurrentAccount: servctx.currentAccount.Name,
+		CurrentAccount: currentAccountName,
 		Accounts:       accountData,
 		Error:          outError,
 	}
@@ -81,16 +98,23 @@ func AddAccountHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	recurring := data.toDbAccount()
+	recurring, err := data.toDbAccount()
+	if err != nil {
+		outErr := fmt.Sprintf("Failed to add recurring transaction: %s", err)
+		log.Printf("Error: %s\n", outErr)
+		io.WriteString(w, outErr)
+		return
+	}
 
 	err = db.Insert(&recurring)
 	if err != nil {
 		outErr := fmt.Sprintf("Failed to add recurring transaction: %s", err)
 		log.Printf("Error: %s\n", outErr)
 		io.WriteString(w, outErr)
+		return
 	}
 
-	if servctx == nil {
+	if servctx.currentAccount == nil {
 		RefreshAccount()
 	}
 

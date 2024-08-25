@@ -1,14 +1,49 @@
 
 html {
 	font-family: verdana;
-	font-size: 18px;
 }
 
 body {
 	margin: 0;
 	padding: 0;
+	font-size: 1.2em;
 }
 
+/* @media (min-width: 992px) { */
+/* 	body { */
+/* 		font-size: 1.4em; */
+/* 	} */
+/* } */
+/**/
+/* @media (max-width: 768px) { */
+/* 	body { */
+/* 		font-size: 1.4em; */
+/* 	} */
+/* } */
+
+.error-display {
+	position: absolute;
+	display: none;
+	right: 0;
+	top: 0;
+	width: 100vw;
+	height: 50vh;
+	pointer-events: none;
+	background: linear-gradient(191deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 15%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0) 40%);
+}
+
+.error-display > .error {
+	color: #e11d1d;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 30vw;
+    height: 30vh;
+    padding: 20px 20px;
+    font-weight: bold;
+    font-size: 0.9em;
+    text-align: right;
+}
 
 .hidden {
 	display: none;
@@ -29,7 +64,7 @@ body {
 
 .floaty-box {
 	width: 80%;
-	max-width: 1100px;
+	min-width: 820px;
 	box-sizing: border-box;
 	box-shadow: -2px 2px 2px 0px #e3e3ea;
 	border: 1px solid #f7f7f7;
@@ -39,8 +74,8 @@ body {
 }
 
 .input {
-	font-size: 14px;
-	box-shadow: -2px 2px 2px 0px #e3e3ea;
+	font-size: 1.0em;
+ 	box-shadow: -2px 2px 2px 0px #e3e3ea;
 	border: 1px solid #c9c9ce;
 	padding: 4px 8px;
 }
@@ -81,11 +116,11 @@ input::-webkit-inner-spin-button {
 
 
 .small-title {
-	font-size: 12px
+	font-size: 0.8em;
 }
 
 .small-lbl {
-	font-size: 10px
+	font-size: 0.6em;
 }
 
 .flex-spaced-centered {
@@ -120,18 +155,22 @@ input::-webkit-inner-spin-button {
 	box-sizing: border-box;
 	margin: 4px;
 	padding: 7px;
-    font-size: 14px;
+    font-size: 1.0em;
 	border-bottom: 1px solid #f1f1f1;
 	color: #6f6f6f;
 }
 
+.transaction > div {
+	padding: 0, 18px;
+}
+
 .transaction > .name {
-	width: 70%;
+	width: 60%;
 	box-sizing: border-box;
 }
 
 .transaction > .date {
-	width: 15%;
+	width: 20%;
 	box-sizing: border-box;
 	text-align: left;
 	padding-left: 12px;
@@ -146,7 +185,7 @@ input::-webkit-inner-spin-button {
 }
 
 .transaction > .actions {
-	width: 5%;
+	width: 10%;
 	box-sizing: border-box;
     display: flex;
     justify-content: space-evenly;
@@ -193,7 +232,7 @@ input::-webkit-inner-spin-button {
 	display: flex;
 	align-self: end;
 	padding: 3px 70px;
-	font-size: 14px;
+	font-size: 0.8em;
 	color: #b7d4cc;
 }
 

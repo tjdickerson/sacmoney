@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"log"
 )
 
 type Account struct {
@@ -18,12 +17,11 @@ func (a *Account) insert() error {
 		return fmt.Errorf("Error preparing account for insert: %s", err)
 	}
 
-	test, err := stmt.Exec(sql.Named("name", a.Name))
+	_, err = stmt.Exec(sql.Named("name", a.Name))
 	if err != nil {
 		return fmt.Errorf("Error inserting account: %s", err)
 	}
 
-	log.Printf("Result of insert: %v\n", test)
 	return nil
 }
 

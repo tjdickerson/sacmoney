@@ -19,21 +19,23 @@
 		<div class="floaty-box flex-spaced-centered new-transaction">
 			<div class="small-title">New Recurring Transaction</div>
 			<div class="flex-spaced-centered trans-input-bar">
-				<div class="trans-date-input">
-					<div class="small-lbl">Occurrence Date</div>
-					<input id="input-recurring-date" class="input" type="date" value="2024-08-11"></input>
+				<div class="trans-amount-input">
+					<div class="small-lbl">Occurrence Day</div>
+					<input id="input-recurring-date" class="input" type="number" placeholder="7" min="1" max="28"
+						required></input>
 				</div>
 				<div class="trans-name-input">
 					<div class="small-lbl">Description/Name</div>
-					<input id="input-recurring-name" class="input" type="text" placeholder="Paycheck"></input>
+					<input id="input-recurring-name" class="input" type="text" placeholder="Paycheck" required></input>
 				</div>
 				<div class="trans-amount-input">
 					<div class="small-lbl">Amount</div>
-					<input id="input-recurring-amount" class="input number" type="number" placeholder="2103.12"></input>
+					<input id="input-recurring-amount" class="input number" type="number" placeholder="2103.12"
+						required></input>
 				</div>
 				<div class="trans-add-button">
 					<div class="small-lbl">&nbsp;</div>
-					<button id="btn-add" class="btn-link" onclick="add_recurring_transaction();">Add</button>
+					<button id="btn-add" class="btn-link" onmousedown="add_recurring_transaction();">Add</button>
 				</div>
 			</div>
 		</div>
@@ -45,7 +47,7 @@
 				<div class="date"> {{$recurr.Day}} </div>
 				<div class="name">{{$recurr.Name}}</div>
 				<div class="amount {{if $recurr.IsNeg}}neg{{else}}pos{{end}}">{{$recurr.Amount}}</div>
-				<div class="actions"><a tid="{{$recurr.Id}}" onclick="delete_recurring_transaction(this);">&#x2716;</a>
+				<div class="actions"><a rid="{{$recurr.Id}}" onclick="delete_recurring_transaction(this);">&#x2716;</a>
 				</div>
 			</div>
 			{{end}}

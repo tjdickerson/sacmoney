@@ -32,7 +32,7 @@ func Run() {
 
 	servctx = &serverContext{}
 	if !db.HasAccount() {
-		servctx = nil
+		servctx.currentAccount = nil
 	} else {
 		RefreshAccount()
 	}
@@ -41,9 +41,11 @@ func Run() {
 
 	http.HandleFunc("/", TransMainHandler)
 	http.HandleFunc("/addTransaction", AddTransactionHandler)
+	http.HandleFunc("/deleteTransaction", DeleteTransactionHandler)
 
 	http.HandleFunc("/recurrings", RecurringMainHandler)
 	http.HandleFunc("/addRecurring", AddRecurringHandler)
+	http.HandleFunc("/deleteRecurring", DeleteRecurringHandler)
 
 	http.HandleFunc("/accounts", AccountMainHandler)
 	http.HandleFunc("/addAccount", AddAccountHandler)

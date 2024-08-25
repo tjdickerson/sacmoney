@@ -16,8 +16,17 @@ import (
 	utils "tjdickerson/sacmoney/pkg/utils"
 )
 
-func handleNoAccount(w http.ResponseWriter) {
-	io.WriteString(w, "No account, click on accounts at top.")
+func handleNoAccount(w http.ResponseWriter, t *template.Template) {
+	data := TransMain{
+		AccountName:    "No account, click on accounts at top.",
+		TotalAvailable: "0",
+		Transactions:   nil,
+		Error:          "",
+	}
+
+	var outHtml bytes.Buffer
+	t.Execute(&outHtml, data)
+	io.WriteString(w, outHtml.String())
 }
 
 type TransactionData struct {
@@ -45,16 +54,24 @@ func convertTransaction(t *db.Transaction) TransactionData {
 	}
 }
 
-func (t *TransactionData) toDbTransaction() db.Transaction {
+func (t *TransactionData) toDbTransaction() (db.Transaction, error) {
 	name := html.EscapeString(strings.TrimSpace(t.Name))
 	amount := utils.GetCentsFromString(t.Amount)
-	date, _ := time.Parse("2006-01-02", t.Date)
+	date, err := time.Parse("2006-01-02", t.Date)
+	if err != nil {
+		date = time.Now()
+	}
+
+	var outErr string = ""
+	if len(name) == 0 {
+		outErr = outErr + "Name required.\n"
+	}
 
 	return db.Transaction{
 		Name:   name,
 		Amount: amount,
 		Date:   date,
-	}
+	}, nil
 }
 
 func TransMainHandler(w http.ResponseWriter, r *http.Request) {
@@ -66,8 +83,8 @@ func TransMainHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(fmt.Sprintf("Error parsing template: %s", err))
 	}
 
-	if servctx == nil {
-		handleNoAccount(w)
+	if servctx.currentAccount == nil {
+		handleNoAccount(w, t)
 		return
 	}
 
@@ -107,12 +124,19 @@ func AddTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	transaction := data.toDbTransaction()
+	transaction, err := data.toDbTransaction()
+	if err != nil {
+		outErr := fmt.Sprintf("%s", err)
+		io.WriteString(w, outErr)
+		return
+	}
+
 	err = db.Insert(&transaction)
 	if err != nil {
 		outErr := fmt.Sprintf("Failed to add transaction")
 		log.Printf("Error: %s\n", outErr)
 		io.WriteString(w, outErr)
+		return
 	}
 
 	RefreshAccount()

@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -19,7 +18,7 @@ func GetCentsFromString(amount string) int64 {
 
 	result, err := strconv.Atoi(clean)
 	if err != nil {
-		log.Printf("Failed to convert %s (%s) to cents.\n", amount, clean)
+		return 0
 	}
 
 	if !hasCents {

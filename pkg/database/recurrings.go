@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"time"
 )
 
 type Recurring struct {
@@ -60,6 +61,7 @@ func (r *Recurring) insert() error {
 		sql.Named("name", r.Name),
 		sql.Named("amount", r.Amount),
 		sql.Named("occurrence_day", r.Day),
+		sql.Named("timestamp_added", time.Now().UnixMilli()),
 	)
 	if err != nil {
 		return fmt.Errorf("Error inserting recurring: %s", err)
@@ -73,7 +75,13 @@ func (r *Recurring) update() error {
 }
 
 func (r *Recurring) delete() error {
-	return fmt.Errorf("Not yet implemented")
+	stmt, err := dbc.db.Prepare(DEL_RECURRING_TRANSACTION)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(sql.Named("id", r.Id))
+	return err
 }
 
 const CT_RECURRINGS = `
@@ -111,5 +119,5 @@ const INS_RECURRING_TRANSACTION = `
 	values (@account_id, @name, @amount, @occurrence_day, @timestamp_added)
 `
 const DEL_RECURRING_TRANSACTION = `
-	delete from recurrings where id = ?
+	delete from recurrings where id = @id;
 `
