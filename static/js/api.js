@@ -80,6 +80,44 @@ function delete_recurring_transaction(sender) {
 		});
 }
 
+function edit_row(sender) {
+	const parent = sender.parentElement.parentElement;
+	const readChildren = parent.querySelectorAll(".read");
+	const editChildren = parent.querySelectorAll(".edit");
+
+	parent.classList.add("editing");
+
+	for (let i = 0; i < readChildren.length; i++) {
+		const child = readChildren[i];
+		child.classList.add("hidden");
+	}
+
+	for (let i = 0; i < editChildren.length; i++) {
+		const child = editChildren[i];
+		child.classList.remove("hidden");
+	}
+}
+
+function cancel_row(sender) {
+	const parent = sender.parentElement.parentElement;
+	const readChildren = parent.querySelectorAll(".read");
+	const editChildren = parent.querySelectorAll(".edit");
+
+	parent.classList.remove("editing");
+
+	for (let i = 0; i < readChildren.length; i++) {
+		const child = readChildren[i];
+		child.classList.remove("hidden");
+	}
+
+	for (let i = 0; i < editChildren.length; i++) {
+		const child = editChildren[i];
+		child.classList.add("hidden");
+	}
+
+}
+
+
 /**
  * @param {string} uri
  * @param {function} callback

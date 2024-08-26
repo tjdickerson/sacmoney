@@ -47,7 +47,8 @@
 				<div class="date"> {{$recurr.Day}} </div>
 				<div class="name">{{$recurr.Name}}</div>
 				<div class="amount {{if $recurr.IsNeg}}neg{{else}}pos{{end}}">{{$recurr.Amount}}</div>
-				<div class="actions"><a rid="{{$recurr.Id}}" onclick="delete_recurring_transaction(this);">&#x2716;</a>
+				<div class="actions">
+					<a rid="{{$recurr.Id}}" onmousedown="delete_recurring_transaction(this);">&#x2716;</a>
 				</div>
 			</div>
 			{{end}}
