@@ -42,26 +42,33 @@ func convertRecurring(r *db.Recurring) RecurringData {
 func (r *RecurringData) toDbRecurring() (db.Recurring, error) {
 	name := html.EscapeString(strings.TrimSpace(r.Name))
 	amount := utils.GetCentsFromString(r.Amount)
-	day, err := strconv.Atoi(r.Day)
 
 	var outErr string = ""
+	id, err := strconv.Atoi(r.Id)
 	if err != nil {
-		outErr = outErr + "Day of occurrence required.\n"
+		outErr = outErr + "Error reading id. "
+	}
+
+	day, err := strconv.Atoi(r.Day)
+	if err != nil {
+		outErr = outErr + "Day of occurrence required. "
 	} else {
 		if day < 1 || day > 28 {
-			outErr = outErr + "Day needs to be between 1-28 inclusive.\n"
+			outErr = outErr + "Day needs to be between 1-28 inclusive. "
 		}
 	}
 
 	if len(name) == 0 {
-		outErr = outErr + "Name required.\n"
+		outErr = outErr + "Name required. "
 	}
 
+	log.Printf("outerr: %s\n", outErr)
 	if len(outErr) > 0 {
 		return db.Recurring{}, fmt.Errorf("%s", outErr)
 	}
 
 	return db.Recurring{
+		Id:     id,
 		Name:   name,
 		Amount: amount,
 		Day:    uint8(day),
@@ -106,7 +113,7 @@ func RecurringMainHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, outHtml.String())
 }
 
-func AddRecurringHandler(w http.ResponseWriter, r *http.Request) {
+func SaveRecurringHandler(w http.ResponseWriter, r *http.Request) {
 	var data RecurringData
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -124,7 +131,12 @@ func AddRecurringHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = db.Insert(&recurring)
+	if recurring.Id == 0 {
+		err = db.Insert(&recurring)
+	} else {
+		err = db.Update(&recurring)
+	}
+
 	if err != nil {
 		outErr := fmt.Sprintf("Failed to add recurring transaction: %s", err)
 		log.Printf("Error: %s\n", outErr)

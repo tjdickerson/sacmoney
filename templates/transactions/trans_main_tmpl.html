@@ -46,12 +46,12 @@
 				<div class="date"> {{$trans.Date}} </div>
 				<div class="read name">{{$trans.Name}}</div>
 				<div class="hidden edit name">
-					<input id="edit-trans-name" class="input" type="text" placeholder="Food Market"
+					<input id="edit-trans-name_{{$trans.Id}}" class="input" type="text" placeholder="Food Market"
 						value="{{$trans.Name}}"></input>
 				</div>
 				<div class="read amount {{if $trans.IsNeg}}neg{{else}}pos{{end}}">{{$trans.Amount}}</div>
 				<div class="hidden edit amount">
-					<input id="input-trans-amount" class="input number" type="number" placeholder="-20.38"
+					<input id="edit-trans-amount_{{$trans.Id}}" class="input number" type="number" placeholder="-20.38"
 						value="{{$trans.Amount}}"></input>
 				</div>
 				<div class=" actions">

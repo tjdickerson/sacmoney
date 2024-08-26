@@ -40,11 +40,11 @@ func Run() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	http.HandleFunc("/", TransMainHandler)
-	http.HandleFunc("/addTransaction", AddTransactionHandler)
+	http.HandleFunc("/saveTransaction", SaveTransactionHandler)
 	http.HandleFunc("/deleteTransaction", DeleteTransactionHandler)
 
 	http.HandleFunc("/recurrings", RecurringMainHandler)
-	http.HandleFunc("/addRecurring", AddRecurringHandler)
+	http.HandleFunc("/saveRecurring", SaveRecurringHandler)
 	http.HandleFunc("/deleteRecurring", DeleteRecurringHandler)
 
 	http.HandleFunc("/accounts", AccountMainHandler)

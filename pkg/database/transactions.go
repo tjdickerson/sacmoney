@@ -38,7 +38,22 @@ func (t *Transaction) insert() error {
 }
 
 func (t *Transaction) update() error {
-	return fmt.Errorf("Not yet implemented")
+	stmt, err := dbc.db.Prepare(UPD_TRANSACTION)
+	if err != nil {
+		return fmt.Errorf("Error preparing update for transaction: %s", err)
+	}
+
+	_, err = stmt.Exec(
+		sql.Named("id", t.Id),
+		sql.Named("name", t.Name),
+		sql.Named("amount", t.Amount),
+	)
+
+	if err != nil {
+		return fmt.Errorf("Error updating transaction: %s", err)
+	}
+
+	return nil
 }
 
 func fetchAllTransactions() ([]Transaction, error) {
@@ -125,6 +140,13 @@ const INS_TRANSACTION = `
 	    , transaction_date
 	    , timestamp_added)
 	values (@account_id, @name, @amount, @transaction_date, @timestamp_added)
+`
+
+const UPD_TRANSACTION = `
+	update transactions 
+	set name = @name,
+	    amount = @amount
+	where id = @id;
 `
 
 const Q_TRANSACTIONS = `

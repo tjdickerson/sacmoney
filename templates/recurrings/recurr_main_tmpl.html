@@ -44,9 +44,20 @@
 			{{range $recurr := .RecurringTransactions}}
 			<div class="transaction">
 				<div class="hidden">{{$recurr.Id}}</div>
-				<div class="date"> {{$recurr.Day}} </div>
-				<div class="name">{{$recurr.Name}}</div>
-				<div class="amount {{if $recurr.IsNeg}}neg{{else}}pos{{end}}">{{$recurr.Amount}}</div>
+				<div class="read date"> {{$recurr.Day}} </div>
+				<div class="hidden edit date">
+					<input id="input-recurring-date" class="input" type="number" placeholder="7" min="1" max="28"
+						required></input>
+				</div>
+				<div class="read name"> {{$recurr.Name}} </div>
+				<div class="hidden edit name">
+					{{$recurr.Name}}
+				</div>
+				<div class="read amount {{if $recurr.IsNeg}}neg{{else}}pos{{end}}">{{$recurr.Amount}}</div>
+				<div class="hidden edit amount">
+					<input id="input-recurring-name" class="input" type="text" placeholder="Paycheck"
+						value="{{$recurr.Amount}}" required></input>
+				</div>
 				<div class="actions">
 					<a rid="{{$recurr.Id}}" onmousedown="delete_recurring_transaction(this);">&#x2716;</a>
 				</div>

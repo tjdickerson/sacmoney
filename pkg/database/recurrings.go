@@ -118,6 +118,15 @@ const INS_RECURRING_TRANSACTION = `
 	    , timestamp_added)
 	values (@account_id, @name, @amount, @occurrence_day, @timestamp_added)
 `
+
+const UPD_RECURRING_TRANSACTION = `
+	update recurrings r 
+	set r.name = @name,
+		r.amount = @amount,
+		r.occurrence_day = @day
+    where r.id = @id;
+`
+
 const DEL_RECURRING_TRANSACTION = `
 	delete from recurrings where id = @id;
 `

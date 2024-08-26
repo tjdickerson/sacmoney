@@ -57,17 +57,28 @@ func convertTransaction(t *db.Transaction) TransactionData {
 func (t *TransactionData) toDbTransaction() (db.Transaction, error) {
 	name := html.EscapeString(strings.TrimSpace(t.Name))
 	amount := utils.GetCentsFromString(t.Amount)
+
+	var outErr string = ""
+	id, err := strconv.Atoi(t.Id)
+	if err != nil {
+		outErr = outErr + "Error reading id. "
+	}
+
 	date, err := time.Parse("2006-01-02", t.Date)
 	if err != nil {
 		date = time.Now()
 	}
 
-	var outErr string = ""
 	if len(name) == 0 {
-		outErr = outErr + "Name required.\n"
+		outErr = outErr + "Name required. "
+	}
+
+	if len(outErr) > 0 {
+		return db.Transaction{}, fmt.Errorf("%s", outErr)
 	}
 
 	return db.Transaction{
+		Id:     id,
 		Name:   name,
 		Amount: amount,
 		Date:   date,
@@ -114,7 +125,7 @@ func TransMainHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, outHtml.String())
 }
 
-func AddTransactionHandler(w http.ResponseWriter, r *http.Request) {
+func SaveTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	var data TransactionData
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -131,9 +142,14 @@ func AddTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = db.Insert(&transaction)
+	if transaction.Id == 0 {
+		err = db.Insert(&transaction)
+	} else {
+		err = db.Update(&transaction)
+	}
+
 	if err != nil {
-		outErr := fmt.Sprintf("Failed to add transaction")
+		outErr := fmt.Sprintf("Failed to add transaction: %s", err)
 		log.Printf("Error: %s\n", outErr)
 		io.WriteString(w, outErr)
 		return

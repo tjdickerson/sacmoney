@@ -3,14 +3,26 @@ function add_transaction() {
 	const trans_date = document.getElementById("input-trans-date").value;
 	const trans_name = document.getElementById("input-trans-name").value;
 	const trans_amount = document.getElementById("input-trans-amount").value;
-	const form = document.getElementById("form-new-transaction")
-	console.log(form)
 
-	post("/addTransaction",
+	post("/saveTransaction",
 		(rt) => { after_post(rt) },
 		{
 			id: "0",
 			date: trans_date,
+			name: trans_name,
+			amount: trans_amount,
+		});
+}
+
+function save_transaction(sender) {
+	const trn_id = sender.getAttribute("tid");
+	const trans_name = document.getElementById(`edit-trans-name_${trn_id}`).value;
+	const trans_amount = document.getElementById(`edit-trans-amount_${trn_id}`).value;
+
+	post("/saveTransaction",
+		(rt) => { after_post(rt) },
+		{
+			id: trn_id,
 			name: trans_name,
 			amount: trans_amount,
 		});
@@ -21,9 +33,26 @@ function add_recurring_transaction() {
 	const recurring_name = document.getElementById("input-recurring-name").value;
 	const recurring_amount = document.getElementById("input-recurring-amount").value;
 
-	post("/addRecurring",
+	post("/saveRecurring",
 		(rt) => { after_post(rt); },
 		{
+			id: "0",
+			day: recurring_date,
+			name: recurring_name,
+			amount: recurring_amount,
+		});
+}
+
+function save_recurring_transaction() {
+	const recurr_id = sender.getAttribute("rid");
+	const recurring_date = document.getElementById("edit-recurring-date").value;
+	const recurring_name = document.getElementById("edit-recurring-name").value;
+	const recurring_amount = document.getElementById("edit-recurring-amount").value;
+
+	post("/saveRecurring",
+		(rt) => { after_post(rt); },
+		{
+			id: recurr_id,
 			day: recurring_date,
 			name: recurring_name,
 			amount: recurring_amount,
