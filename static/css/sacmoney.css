@@ -65,7 +65,6 @@ body {
 
 .floaty-box {
 	width: 80%;
-	min-width: 820px;
 	box-sizing: border-box;
 	box-shadow: -2px 2px 2px 0px #e3e3ea;
 	border: 1px solid #f7f7f7;
@@ -128,6 +127,18 @@ input::-webkit-inner-spin-button {
 	display: flex;
 	justify-content: space-between;
     align-items: center;
+}
+
+.flex-sbs {
+	display: flex;
+	justify-content: space-between;
+}
+
+.side-trans {
+	width: 78%
+}
+.side-recurr {
+	width: 18%
 }
 
 /*

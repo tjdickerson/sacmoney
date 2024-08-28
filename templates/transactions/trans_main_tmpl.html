@@ -17,52 +17,61 @@
 			<div class="amount">{{.TotalAvailable}}</div>
 		</div>
 
-		<div class="floaty-box flex-spaced-centered new-transaction">
-			<div class="small-title">New Transaction</div>
-			<div class="flex-spaced-centered trans-input-bar">
-				<div class="trans-date-input">
-					<div class="small-lbl">Transaction Date</div>
-					<input id="input-trans-date" class="input" type="date" value="2024-08-11"></input>
+		<div class="flex-sbs">
+			<div class="side-trans">
+				<div class="floaty-box flex-spaced-centered new-transaction">
+					<div class="small-title">New Transaction</div>
+					<div class="flex-spaced-centered trans-input-bar">
+						<div class="trans-date-input">
+							<div class="small-lbl">Transaction Date</div>
+							<input id="input-trans-date" class="input" type="date" value="2024-08-11"></input>
+						</div>
+						<div class="trans-name-input">
+							<div class="small-lbl">Description/Name</div>
+							<input id="input-trans-name" class="input" type="text" placeholder="Food Market"></input>
+						</div>
+						<div class="trans-amount-input">
+							<div class="small-lbl">Amount</div>
+							<input id="input-trans-amount" class="input number" type="number"
+								placeholder="-20.38"></input>
+						</div>
+						<div class="trans-add-button">
+							<div class="small-lbl">&nbsp;</div>
+							<button id="btn-add" class="btn-link" onmousedown="add_transaction();">Add</button>
+						</div>
+					</div>
 				</div>
-				<div class="trans-name-input">
-					<div class="small-lbl">Description/Name</div>
-					<input id="input-trans-name" class="input" type="text" placeholder="Food Market"></input>
-				</div>
-				<div class="trans-amount-input">
-					<div class="small-lbl">Amount</div>
-					<input id="input-trans-amount" class="input number" type="number" placeholder="-20.38"></input>
-				</div>
-				<div class="trans-add-button">
-					<div class="small-lbl">&nbsp;</div>
-					<button id="btn-add" class="btn-link" onmousedown="add_transaction();">Add</button>
-				</div>
-			</div>
-		</div>
 
-		<div class="floaty-box transactions">
-			{{range $trans := .Transactions}}
-			<div class="transaction">
-				<div class="hidden">{{$trans.Id}}</div>
-				<div class="date"> {{$trans.Date}} </div>
-				<div class="read name">{{$trans.Name}}</div>
-				<div class="hidden edit name">
-					<input id="edit-trans-name_{{$trans.Id}}" class="input" type="text" placeholder="Food Market"
-						value="{{$trans.Name}}"></input>
-				</div>
-				<div class="read amount {{if $trans.IsNeg}}neg{{else}}pos{{end}}">{{$trans.Amount}}</div>
-				<div class="hidden edit amount">
-					<input id="edit-trans-amount_{{$trans.Id}}" class="input number" type="number" placeholder="-20.38"
-						value="{{$trans.Amount}}"></input>
-				</div>
-				<div class=" actions">
-					<a tid="{{$trans.Id}}" class="read hover_blue" onmousedown="edit_row(this);">&#x270E;</a>
-					<a tid="{{$trans.Id}}" class="read hover_red" onmousedown="delete_transaction(this);">&#x2716;</a>
-					<a tid="{{$trans.Id}}" class="hidden edit hover_green"
-						onmousedown="save_transaction(this);">&#x2713;</a>
-					<a tid="{{$trans.Id}}" class="hidden edit hover_red" onmousedown="cancel_row(this);">&#x2716;</a>
+				<div class="floaty-box transactions">
+					{{range $trans := .Transactions}}
+					<div class="transaction">
+						<div class="hidden">{{$trans.Id}}</div>
+						<div class="date"> {{$trans.Date}} </div>
+						<div class="read name">{{$trans.Name}}</div>
+						<div class="hidden edit name">
+							<input id="edit-trans-name_{{$trans.Id}}" class="input" type="text"
+								placeholder="Food Market" value="{{$trans.Name}}"></input>
+						</div>
+						<div class="read amount {{if $trans.IsNeg}}neg{{else}}pos{{end}}">{{$trans.Amount}}</div>
+						<div class="hidden edit amount">
+							<input id="edit-trans-amount_{{$trans.Id}}" class="input number" type="number"
+								placeholder="-20.38" value="{{$trans.Amount}}"></input>
+						</div>
+						<div class=" actions">
+							<a tid="{{$trans.Id}}" class="read hover_blue" onmousedown="edit_row(this);">&#x270E;</a>
+							<a tid="{{$trans.Id}}" class="read hover_red"
+								onmousedown="delete_transaction(this);">&#x2716;</a>
+							<a tid="{{$trans.Id}}" class="hidden edit hover_green"
+								onmousedown="save_transaction(this);">&#x2713;</a>
+							<a tid="{{$trans.Id}}" class="hidden edit hover_red"
+								onmousedown="cancel_row(this);">&#x2716;</a>
+						</div>
+					</div>
+					{{end}}
 				</div>
 			</div>
-			{{end}}
+			<div class="floaty-box side-recurr">
+			</div>
 		</div>
 	</div>
 
