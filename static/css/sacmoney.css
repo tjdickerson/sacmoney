@@ -144,6 +144,44 @@ input::-webkit-inner-spin-button {
 /*
 * transactions page
 */
+
+.account-name {
+	display: flex;
+	align-items: center;
+}
+
+.current-name-month {
+	margin-left: 32px;
+	font-size: 0.8em;
+	padding-left: 6px;
+	color: #3e325d;
+}
+
+.current-name-year {
+	padding-left: 4px;
+	font-size: 0.8em;
+	color: #5e628d;
+}
+
+.rollover-container {
+	margin-left: 24px;
+	display: flex;
+	align-items: center;
+}
+
+.rollover-container > a {
+	font-size: 0.75em;
+	color: #51bff5;
+}
+
+.rollover-container > a:hover {
+	color: #a18ff5;
+}
+
+.rollover-container > a:visited {
+	color: #51bff5;
+}
+
 .current-account {
 	display: flex;
 	justify-content: space-between;

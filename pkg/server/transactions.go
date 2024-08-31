@@ -37,17 +37,30 @@ type TransactionData struct {
 	IsNeg  bool
 }
 
+type RecurringDisplay struct {
+	Name     string
+	Day      string
+	Amount   string
+	CssClass string
+	IsNeg    bool
+}
+
 type TransMain struct {
 	AccountName    string
+	Month          string
+	Year           string
+	NextMonth      string
+	NextYear       string
 	TotalAvailable string
 	Transactions   []TransactionData
+	Recurrings     []RecurringDisplay
 	Error          string
 }
 
 func convertTransaction(t *db.Transaction) TransactionData {
 	return TransactionData{
 		Id:     strconv.Itoa(t.Id),
-		Name:   t.Name,
+		Name:   html.EscapeString(strings.TrimSpace(t.Name)),
 		Date:   t.Date.Format("Mon 02 Jan"),
 		Amount: fmt.Sprintf("%.2f", float32(t.Amount)*float32(0.01)),
 		IsNeg:  t.Amount < 0,
@@ -113,10 +126,48 @@ func TransMainHandler(w http.ResponseWriter, r *http.Request) {
 		transactionData = append(transactionData, convertTransaction(&dbTrans))
 	}
 
+	recurrings, err := db.FetchAllRecurrings()
+	if err != nil {
+		outError = fmt.Sprintf("%s", err)
+		log.Println(outError)
+	}
+
+	recurringData := []RecurringDisplay{}
+	for _, r := range recurrings {
+		exists := transactionsContainsRecurring(&transactionData, r.Name)
+		var cssClass string
+		if exists {
+			cssClass = "accounted-for"
+		} else {
+			cssClass = ""
+		}
+
+		recurringData = append(recurringData, RecurringDisplay{
+			Name:     r.Name,
+			Amount:   fmt.Sprintf("%.2f", float32(r.Amount)*float32(0.01)),
+			IsNeg:    r.Amount < 0,
+			Day:      fmt.Sprintf("%d", r.Day),
+			CssClass: cssClass,
+		})
+	}
+
+	currentYear := servctx.currentYear
+	currentMonth := servctx.currentMonth
+	nextYear, nextMonth, err := GetNextYearMonth(currentYear, currentMonth)
+	if err != nil {
+		outError = fmt.Sprintf("%s", err)
+		log.Printf("%s\n", outError)
+	}
+
 	data := TransMain{
 		AccountName:    accountName,
+		Month:          currentMonth,
+		Year:           currentYear,
+		NextMonth:      nextMonth,
+		NextYear:       nextYear,
 		TotalAvailable: totalAvailable,
 		Transactions:   transactionData,
+		Recurrings:     recurringData,
 		Error:          outError,
 	}
 
@@ -189,4 +240,14 @@ func DeleteTransactionHandler(w http.ResponseWriter, r *http.Request) {
 
 	RefreshAccount()
 	io.WriteString(w, "SUCCESS")
+}
+
+func transactionsContainsRecurring(transactions *[]TransactionData, recurringName string) bool {
+	for _, t := range *transactions {
+		if strings.ToLower(strings.TrimSpace(t.Name)) == strings.ToLower(strings.TrimSpace(recurringName)) {
+			return true
+		}
+	}
+
+	return false
 }
