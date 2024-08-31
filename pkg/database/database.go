@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 	"os"
+	"time"
 )
 
 type Crudder interface {
@@ -26,9 +28,25 @@ var (
 const DbInitError = "Database not initialized. Call InitDatabase() before calling any other database functions. (Also defer CloseDatabase())"
 
 func InitDatabase(dbPath string, isRollover bool) error {
-
+	var currentAccount Account
+	var recurrings []Recurring
 	if isRollover {
-		// TODO: Get current amount, get all recurrings, then after schema creation insert those
+		a, err := getAccount(dbc.currentAccountId)
+		if err != nil {
+			return fmt.Errorf("Error getting current account information for rollover: %s", err)
+		}
+		currentAccount = a
+
+		r, err := fetchAllRecurrings()
+		if err != nil {
+			return fmt.Errorf("Error getting recurring transactions for rollover: %s", err)
+		}
+		recurrings = r
+
+		if dbc.db != nil {
+			dbc.db.Close()
+			dbc.db = nil
+		}
 	}
 
 	_, existErr := os.Stat(dbPath)
@@ -42,18 +60,25 @@ func InitDatabase(dbPath string, isRollover bool) error {
 
 	db, err := sql.Open("sqlite3", dbPath+"?cache=shared")
 	db.SetMaxOpenConns(1)
+	dbc.db = db
 
 	if isRollover {
-		// TODO: Get current amount, get all recurrings, then after schema creation insert those
+		err := rolloverDatabase(currentAccount, recurrings)
+		if err != nil {
+			log.Fatal(fmt.Sprintf("Error occurred during rollover: %s\n", err))
+		}
 	}
 
-	dbc.db = db
 	return err
 }
 
 func CloseDatabase() error {
 	if dbc.db != nil {
-		return dbc.db.Close()
+		if err := dbc.db.Close(); err != nil {
+			return err
+		} else {
+			dbc.db = nil
+		}
 	}
 	return nil
 }
@@ -89,6 +114,25 @@ func GetDefaultAccount() (Account, error) {
 	account, err := getAccount(1)
 	dbc.currentAccountId = account.Id
 	return account, err
+}
+
+func CreateTransactionFromRecurring(id int) error {
+	recurring, err := getRecurringById(id)
+	if err != nil {
+		return err
+	}
+
+	newTrans := &Transaction{
+		Name:   recurring.Name,
+		Amount: recurring.Amount,
+		Date:   time.Now(),
+	}
+
+	return newTrans.insert()
+}
+
+func GetRecurringNetBalance() (int64, error) {
+	return getNetRecurringBalance()
 }
 
 func HasAccount() bool {
@@ -134,6 +178,29 @@ func createTable(db *sql.DB, statement string) error {
 	_, err = stmt.Exec()
 	if err != nil {
 		return fmt.Errorf("Failure executing statement: %s", err)
+	}
+
+	return nil
+}
+
+func rolloverDatabase(account Account, recurrings []Recurring) error {
+	if err := account.insert(); err != nil {
+		return fmt.Errorf("Error rolling over account information: %s", err)
+	}
+
+	for _, r := range recurrings {
+		if err := r.insert(); err != nil {
+			return fmt.Errorf("Error rolling over recurring transactions: %s", err)
+		}
+	}
+
+	initialTransaction := &Transaction{
+		Name:   "Starting Balance",
+		Amount: account.TotalAvailable,
+		Date:   time.Now(),
+	}
+	if err := initialTransaction.insert(); err != nil {
+		return fmt.Errorf("Error creating initial transaction for starting balance.")
 	}
 
 	return nil

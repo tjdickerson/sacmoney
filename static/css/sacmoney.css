@@ -82,6 +82,7 @@ body {
 
 .input.number {
 	text-align: right;
+	width: 180px;
 }
 
 .input::placeholder {
@@ -135,19 +136,49 @@ input::-webkit-inner-spin-button {
 }
 
 .side-trans {
-	width: 78%
+	width: 78%;
+	min-width: 1200px;
 }
 .side-recurr {
-	width: 18%
+	width: 18%;
+	min-width: 600px;
+}
+
+.recurr-net {
+	font-size: 1.1em;
 }
 
 /*
 * transactions page
 */
 
+.recurr-header {
+	font-size: 0.8em;
+	padding: 12px 32px;
+	margin: auto;
+	width: 80%;
+}
+
 .account-name {
 	display: flex;
 	align-items: center;
+}
+
+.amount-avail-container {
+	width: 50%;
+	display: flex;
+	flex-direction: column;
+	align-items: end;
+}
+
+.avail-label {
+	font-size: 0.7em;
+	color: #b9b9c5;
+}
+
+.avail-amount {
+	font-size: 1.1em;
+	font-weight: bold;
 }
 
 .current-name-month {
@@ -163,24 +194,6 @@ input::-webkit-inner-spin-button {
 	color: #5e628d;
 }
 
-.rollover-container {
-	margin-left: 24px;
-	display: flex;
-	align-items: center;
-}
-
-.rollover-container > a {
-	font-size: 0.75em;
-	color: #51bff5;
-}
-
-.rollover-container > a:hover {
-	color: #a18ff5;
-}
-
-.rollover-container > a:visited {
-	color: #51bff5;
-}
 
 .current-account {
 	display: flex;
@@ -316,3 +329,34 @@ input::-webkit-inner-spin-button {
 .edit {
 }
 
+.accounted-for {
+	text-decoration: line-through;
+    color: #d3d3ef;
+}
+
+.accounted-for > a {
+	display: none;	
+}
+
+.tool-footer {
+	display: flex;
+	justify-content: end;
+	width: 80%;
+	margin: auto;
+}
+
+.rollover-container {
+}
+
+.rollover-container > a {
+	font-size: 0.75em;
+	color: #51bff5;
+}
+
+.rollover-container > a:hover {
+	color: #a18ff5;
+}
+
+.rollover-container > a:visited {
+	color: #51bff5;
+}

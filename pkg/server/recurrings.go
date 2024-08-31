@@ -26,6 +26,7 @@ type RecurringData struct {
 type RecurringMain struct {
 	AccountName           string
 	RecurringTransactions []RecurringData
+	Net                   string
 	Error                 string
 }
 
@@ -62,7 +63,6 @@ func (r *RecurringData) toDbRecurring() (db.Recurring, error) {
 		outErr = outErr + "Name required. "
 	}
 
-	log.Printf("outerr: %s\n", outErr)
 	if len(outErr) > 0 {
 		return db.Recurring{}, fmt.Errorf("%s", outErr)
 	}
@@ -102,9 +102,16 @@ func RecurringMainHandler(w http.ResponseWriter, r *http.Request) {
 		recurringData = append(recurringData, convertRecurring(&dbRecurr))
 	}
 
+	net, err := db.GetRecurringNetBalance()
+	if err != nil {
+		outError = fmt.Sprintf("%s<br />%s", outError, err)
+		net = 0
+	}
+
 	data := RecurringMain{
 		AccountName:           accountName,
 		RecurringTransactions: recurringData,
+		Net:                   fmt.Sprintf("%.2f", float32(net)*float32(0.01)),
 		Error:                 outError,
 	}
 

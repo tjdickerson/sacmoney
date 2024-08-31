@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -99,7 +100,21 @@ func GetNextYearMonth(year string, month string) (string, string, error) {
 }
 
 func NextMonthRollover(w http.ResponseWriter, r *http.Request) {
+	year, month, err := GetNextYearMonth(servctx.currentYear, servctx.currentMonth)
+	if err != nil {
+		io.WriteString(w, fmt.Sprintf("Error getting rollover date: %s", err))
+	}
 
+	servctx.currentMonth = month
+	servctx.currentYear = year
+
+	newDbPath := fmt.Sprintf("%s/%s%s.db", DbDirectory, year, month)
+	if err = db.InitDatabase(newDbPath, true); err != nil {
+		log.Fatal(fmt.Sprintf("Error connecting to new database instance: %s\n", err))
+	}
+
+	RefreshAccount()
+	io.WriteString(w, "SUCCESS")
 }
 
 func Run() {
@@ -137,6 +152,7 @@ func Run() {
 	http.HandleFunc("/addAccount", AddAccountHandler)
 
 	http.HandleFunc("/rollover", NextMonthRollover)
+	http.HandleFunc("/applyRecurring", ApplyRecurringHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

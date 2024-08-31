@@ -14,6 +14,7 @@
 	<div class="page-content">
 		<div class="floaty-box current-account">
 			<div class="name">{{.AccountName}}</div>
+			<div class="recurr-net">{{.Net}}</div>
 		</div>
 
 		<div class="floaty-box flex-spaced-centered new-transaction">
@@ -35,7 +36,8 @@
 				</div>
 				<div class="trans-add-button">
 					<div class="small-lbl">&nbsp;</div>
-					<button id="btn-add" class="btn-link" onmousedown="add_recurring_transaction();">Add</button>
+					<button id="btn-add" class="btn-link" onmousedown="add_recurring_transaction();"
+						onclick="add_recurring_transaction();">Add</button>
 				</div>
 			</div>
 		</div>

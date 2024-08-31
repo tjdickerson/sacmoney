@@ -43,7 +43,7 @@ function add_recurring_transaction() {
 		});
 }
 
-function save_recurring_transaction() {
+function save_recurring_transaction(sender) {
 	const recurr_id = sender.getAttribute("rid");
 	const recurring_date = document.getElementById("edit-recurring-date").value;
 	const recurring_name = document.getElementById("edit-recurring-name").value;
@@ -67,6 +67,22 @@ function add_account() {
 		{
 			name: account_name,
 		});
+}
+
+function rollover() {
+	post("/rollover",
+		(rt) => { after_post(rt); },
+		{
+
+		});
+}
+
+function apply_recurring_transaction(sender) {
+	const recurr_id = sender.getAttribute("rid");
+
+	post("/applyRecurring",
+		(rt) => { after_post(rt); },
+		{ id: recurr_id, });
 }
 
 function after_post(result) {

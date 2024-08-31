@@ -13,6 +13,38 @@ type Recurring struct {
 	Day    uint8
 }
 
+func getRecurringById(id int) (Recurring, error) {
+	stmt, err := dbc.db.Prepare("select id, name, amount from recurrings where id = @id")
+	if err != nil {
+		return Recurring{}, fmt.Errorf("Error preparing recurring by id: %s", err)
+	}
+
+	row := stmt.QueryRow(sql.Named("id", id))
+
+	recurring := Recurring{}
+	if err := row.Scan(&recurring.Id, &recurring.Name, &recurring.Amount); err != nil {
+		return recurring, fmt.Errorf("Error retrieving recurring: %s", err)
+	}
+
+	return recurring, nil
+}
+
+func getNetRecurringBalance() (int64, error) {
+	stmt, err := dbc.db.Prepare("select sum(amount) from recurrings where account_id = @account_id")
+	if err != nil {
+		return 0, fmt.Errorf("Error preparing statement for recurring net balance: %s", err)
+	}
+
+	row := stmt.QueryRow(sql.Named("account_id", dbc.currentAccountId))
+	var balance int64
+	err = row.Scan(&balance)
+	if err != nil {
+		return 0, fmt.Errorf("Error getting recurring net balance: %s", err)
+	}
+
+	return balance, nil
+}
+
 func fetchAllRecurrings() ([]Recurring, error) {
 	stmt, err := dbc.db.Prepare(Q_RECURRING_TRANSACTIONS)
 	if err != nil {
@@ -105,7 +137,7 @@ const Q_RECURRING_TRANSACTIONS = `
 	     , rt.occurrence_day
 	from recurrings rt
 	where account_id = @account_id
-	order by rt.occurrence_day desc
+	order by rt.occurrence_day 
 			,rt.timestamp_added desc
 `
 

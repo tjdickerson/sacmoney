@@ -15,21 +15,6 @@ import (
 
 const WIDTH = 100
 
-func checkEnvironment() error {
-	const dbDir = "data/"
-	fi, err := os.Stat(dbDir)
-	if err != nil || !fi.IsDir() {
-		return fmt.Errorf("Error finding database directory: %s", err)
-	}
-
-	
-}
-
-func getTargetDbPath() string {
-	now := time.Now()
-	path := fmt.Sprintf("%s.db"now.Format("2006January")
-}
-
 func Run() {
 
 	err := db.InitDatabase()

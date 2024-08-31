@@ -12,21 +12,27 @@
 	{{template "title_tmpl" .}}
 
 	<div class="page-content">
-		<div class="floaty-box current-account">
-			<div class="account-name">
-				{{.AccountName}}
-				<div class="current-name-month">{{.Month}}</div>
-				<div class="current-name-year">{{.Year}}</div>
-
-				<div class="rollover-container">
-					<a href="">Rollover to {{.NextMonth}} {{.NextYear}}</a>
-				</div>
-			</div>
-			<div class="amount">{{.TotalAvailable}}</div>
-		</div>
 
 		<div class="flex-sbs">
 			<div class="side-trans">
+				<div class="floaty-box current-account">
+					<div class="account-name">
+						{{.AccountName}}
+						<div class="current-name-month">{{.Month}}</div>
+						<div class="current-name-year">{{.Year}}</div>
+
+					</div>
+
+					<div class="amount-avail-container">
+						<div class="avail-label">
+							Available Balance
+						</div>
+						<div class="avail-amount {{.AvailClass}}">
+							$ {{.TotalAvailable}}
+						</div>
+					</div>
+
+				</div>
 				<div class="floaty-box flex-spaced-centered new-transaction">
 					<div class="small-title">New Transaction</div>
 					<div class="flex-spaced-centered trans-input-bar">
@@ -78,8 +84,33 @@
 					</div>
 					{{end}}
 				</div>
+
+				<div class="tool-footer">
+					<div class="rollover-container">
+						<button class="btn-link" onmousedown="rollover();">Rollover to {{.NextMonth}} {{.NextYear}}</a>
+					</div>
+				</div>
 			</div>
-			<div class="floaty-box side-recurr">
+			<div class="side-recurr">
+				<div class="recurr-header">
+					Recurring Transactions
+				</div>
+				<div class="floaty-box">
+
+					{{range $recurr := .Recurrings}}
+					<div class="transaction">
+						<div class="hidden">{{$recurr.Id}}</div>
+						<div class="actions {{$recurr.CssClass}}">
+							<a rid="{{$recurr.Id}}" class="hover_blue"
+								onmousedown="apply_recurring_transaction(this);">&#x2962;</a>
+						</div>
+						<div class="date {{$recurr.CssClass}}"> {{$recurr.Day}} </div>
+						<div class="name {{$recurr.CssClass}}"> {{$recurr.Name}} </div>
+						<div class="amount {{if $recurr.IsNeg}}neg{{else}}pos{{end}} {{$recurr.CssClass}}">
+							{{$recurr.Amount}}</div>
+					</div>
+					{{end}}
+				</div>
 			</div>
 		</div>
 	</div>

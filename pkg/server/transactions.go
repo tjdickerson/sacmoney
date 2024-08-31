@@ -38,6 +38,7 @@ type TransactionData struct {
 }
 
 type RecurringDisplay struct {
+	Id       string
 	Name     string
 	Day      string
 	Amount   string
@@ -47,6 +48,7 @@ type RecurringDisplay struct {
 
 type TransMain struct {
 	AccountName    string
+	AvailClass     string
 	Month          string
 	Year           string
 	NextMonth      string
@@ -143,6 +145,7 @@ func TransMainHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		recurringData = append(recurringData, RecurringDisplay{
+			Id:       fmt.Sprintf("%d", r.Id),
 			Name:     r.Name,
 			Amount:   fmt.Sprintf("%.2f", float32(r.Amount)*float32(0.01)),
 			IsNeg:    r.Amount < 0,
@@ -159,6 +162,11 @@ func TransMainHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s\n", outError)
 	}
 
+	availClass := "pos"
+	if servctx.currentAccount.TotalAvailable < 0 {
+		availClass = "neg"
+	}
+
 	data := TransMain{
 		AccountName:    accountName,
 		Month:          currentMonth,
@@ -168,6 +176,7 @@ func TransMainHandler(w http.ResponseWriter, r *http.Request) {
 		TotalAvailable: totalAvailable,
 		Transactions:   transactionData,
 		Recurrings:     recurringData,
+		AvailClass:     availClass,
 		Error:          outError,
 	}
 
@@ -237,6 +246,32 @@ func DeleteTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, outErr)
 		return
 	}
+
+	RefreshAccount()
+	io.WriteString(w, "SUCCESS")
+}
+
+func ApplyRecurringHandler(w http.ResponseWriter, r *http.Request) {
+	type jsonData struct {
+		Id string
+	}
+	jd := jsonData{}
+	if err := json.NewDecoder(r.Body).Decode(&jd); err != nil {
+		outErr := fmt.Sprintf("Error getting recurring transaction id: %s", err)
+		log.Printf("%s\n", outErr)
+		io.WriteString(w, outErr)
+		return
+	}
+
+	id, err := strconv.Atoi(jd.Id)
+	if err != nil {
+		outErr := fmt.Sprintf("Error converting recurring transaction id: %s", err)
+		log.Printf("%s\n", outErr)
+		io.WriteString(w, outErr)
+		return
+	}
+
+	db.CreateTransactionFromRecurring(id)
 
 	RefreshAccount()
 	io.WriteString(w, "SUCCESS")
